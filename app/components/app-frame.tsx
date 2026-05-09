@@ -7,6 +7,7 @@ import { BookOpen, Brain, GraduationCap, Languages, Layers, Map, PenLine, Target
 import { Level } from "../data";
 import { LearningProvider, useLearning } from "./learning-state";
 
+//Pages
 const navItems = [
   { href: "/", label: "Dashboard", icon: Target },
   { href: "/roadmap", label: "Roadmap", icon: Map },
