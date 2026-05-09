@@ -30,24 +30,28 @@ type LearningState = {
 };
 
 const LearningContext = createContext<LearningState | null>(null);
+const progressKey = "musashi-kana-progress";
+const levelKey = "musashi-kana-level";
+const legacyProgressKey = "minato-progress";
+const legacyLevelKey = "minato-level";
 
 export function LearningProvider({ children }: { children: ReactNode }) {
   const [level, setLevel] = useState<Level>("N5");
   const [progress, setProgress] = useState<Progress>(defaultProgress);
 
   useEffect(() => {
-    const saved = window.localStorage.getItem("minato-progress");
-    const savedLevel = window.localStorage.getItem("minato-level") as Level | null;
+    const saved = window.localStorage.getItem(progressKey) ?? window.localStorage.getItem(legacyProgressKey);
+    const savedLevel = (window.localStorage.getItem(levelKey) ?? window.localStorage.getItem(legacyLevelKey)) as Level | null;
     if (saved) setProgress({ ...defaultProgress, ...JSON.parse(saved) });
     if (savedLevel === "N5" || savedLevel === "N4") setLevel(savedLevel);
   }, []);
 
   useEffect(() => {
-    window.localStorage.setItem("minato-progress", JSON.stringify(progress));
+    window.localStorage.setItem(progressKey, JSON.stringify(progress));
   }, [progress]);
 
   useEffect(() => {
-    window.localStorage.setItem("minato-level", level);
+    window.localStorage.setItem(levelKey, level);
   }, [level]);
 
   const value = useMemo<LearningState>(() => {

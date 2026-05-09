@@ -1,6 +1,6 @@
-# Minato JLPT Studio
+# Musashi_Kana JLPT Studio
 
-Minato JLPT Studio is a Next.js learning app for JLPT N5 and N4 practice. It includes focused study rooms for vocabulary flashcards, grammar, reading, writing, quizzes, and a guided roadmap.
+Musashi_Kana is a Next.js learning app for JLPT N5 and N4 practice. It includes focused study rooms for vocabulary flashcards, grammar, reading, writing, quizzes, and a guided roadmap.
 
 ## Features
 
