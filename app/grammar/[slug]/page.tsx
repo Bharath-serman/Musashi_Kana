@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
 import { AppFrame, PageHeader } from "../../components/app-frame";
 import { useLearning } from "../../components/learning-state";
-import { getGrammarLesson, getGrammarTopicBySlug } from "../grammar-content";
+import { getGrammarLesson, getGrammarTopicBySlugAny } from "../grammar-content";
 
 export default function GrammarTopicPage() {
   return (
@@ -17,15 +17,17 @@ export default function GrammarTopicPage() {
 
 function GrammarTopicDetail() {
   const { slug } = useParams<{ slug: string }>();
-  const { level } = useLearning();
-  const topic = getGrammarTopicBySlug(level, slug);
+  const { level: currentLevel } = useLearning();
+  const fallback = getGrammarTopicBySlugAny(slug);
+  const resolvedLevel = fallback?.level ?? currentLevel;
+  const topic = fallback?.topic ?? null;
 
   if (!topic) {
     return (
       <>
         <PageHeader
           eyebrow="Patterns"
-          title={`${level} grammar lab`}
+          title={`${resolvedLevel} grammar lab`}
           text="That grammar topic is not available for the current level."
           action={<Link className="secondary-action" href="/grammar">Back to topics</Link>}
         />
@@ -33,7 +35,7 @@ function GrammarTopicDetail() {
     );
   }
 
-  const lesson = getGrammarLesson(level, topic);
+  const lesson = getGrammarLesson(resolvedLevel, topic);
 
   return (
     <>

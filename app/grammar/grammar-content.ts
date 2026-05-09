@@ -284,14 +284,28 @@ export function slugifyGrammar(pattern: string) {
 }
 
 export function getGrammarTopics(level: Level) {
-  return course[level].grammar.map((topic) => ({
-    ...topic,
-    slug: slugifyGrammar(topic.pattern)
-  }));
+  return course[level].grammar.map((topic, index) => {
+    const lesson = lessonLibrary[level][topic.pattern];
+    return {
+      ...topic,
+      slug: slugifyGrammar(lesson?.topic ?? `${topic.pattern}-${index + 1}`)
+    };
+  });
 }
 
 export function getGrammarTopicBySlug(level: Level, slug: string) {
   return getGrammarTopics(level).find((topic) => topic.slug === slug);
+}
+
+export function getGrammarTopicBySlugAny(slug: string) {
+  for (const level of ["N5", "N4"] as Level[]) {
+    const topic = getGrammarTopicBySlug(level, slug);
+    if (topic) {
+      return { level, topic };
+    }
+  }
+
+  return null;
 }
 
 export function getGrammarLesson(level: Level, topic: Grammar) {
