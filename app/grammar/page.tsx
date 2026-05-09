@@ -1,59 +1,40 @@
 "use client";
 
-import { Trophy } from "lucide-react";
+import Link from "next/link";
 import { AppFrame, PageHeader } from "../components/app-frame";
 import { useLearning } from "../components/learning-state";
+import { getGrammarLesson, getGrammarTopics } from "./grammar-content";
 
 export default function GrammarPage() {
   return (
     <AppFrame>
-      <Grammar />
+      <GrammarIndex />
     </AppFrame>
   );
 }
 
-function Grammar() {
-  const { data, level } = useLearning();
-  const weakPoints = level === "N5"
-    ? ["Particles は / が", "Long vowels", "Time expressions"]
-    : ["て-form chains", "ので vs から", "Plain-form grammar"];
+function GrammarIndex() {
+  const { level } = useLearning();
+  const topics = getGrammarTopics(level);
 
   return (
     <>
       <PageHeader
         eyebrow="Patterns"
         title={`${level} grammar lab`}
-        text="Study the core sentence patterns with examples and quick usage notes."
+        text="Choose a grammar topic to open its full lesson page with explanation, examples, and a quick chart."
       />
 
-      <section className="learning-grid">
-        <article className="panel">
-          <div className="grammar-list">
-            {data.grammar.map((item) => (
-              <div className="grammar-card" key={item.pattern}>
-                <code>{item.pattern}</code>
-                <h3>{item.meaning}</h3>
-                <p lang="ja">{item.example}</p>
-                <small>{item.tip}</small>
-              </div>
-            ))}
-          </div>
-        </article>
-
-        <article className="panel weak-panel">
-          <div className="section-heading">
-            <div>
-              <span>Coach</span>
-              <h2>Focus queue</h2>
-            </div>
-          </div>
-          {weakPoints.map((item) => (
-            <div className="focus-row" key={item}>
-              <Trophy size={18} />
-              <span>{item}</span>
-            </div>
-          ))}
-        </article>
+      <section className="grammar-index-grid">
+        {topics.map((topic) => {
+          const lesson = getGrammarLesson(level, topic);
+          return (
+            <Link className="grammar-topic-link" href={`/grammar/${topic.slug}`} key={topic.slug}>
+              <strong>{lesson.topic}</strong>
+              <span>{topic.pattern}</span>
+            </Link>
+          );
+        })}
       </section>
     </>
   );

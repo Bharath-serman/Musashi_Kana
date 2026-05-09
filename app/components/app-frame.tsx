@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import type { ReactNode } from "react";
+import { useEffect, useState } from "react";
+import type { MouseEvent, ReactNode } from "react";
 import { BookOpen, Brain, GraduationCap, Languages, Layers, Map, PenLine, Target } from "lucide-react";
 import { Level } from "../data";
 import { LearningProvider, useLearning } from "./learning-state";
@@ -19,13 +20,62 @@ const navItems = [
 ];
 
 export function AppFrame({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
+  const [isNavigating, setIsNavigating] = useState(false);
+
+  useEffect(() => {
+    setIsNavigating(false);
+  }, [pathname]);
+
+  function handleNavigation(event: MouseEvent<HTMLElement>) {
+    if (
+      event.defaultPrevented ||
+      event.button !== 0 ||
+      event.metaKey ||
+      event.ctrlKey ||
+      event.shiftKey ||
+      event.altKey
+    ) {
+      return;
+    }
+
+    const target = event.target as HTMLElement;
+    const anchor = target.closest("a");
+    if (!anchor) return;
+
+    const href = anchor.getAttribute("href");
+    if (!href || href.startsWith("#") || href.startsWith("mailto:") || href.startsWith("tel:")) {
+      return;
+    }
+
+    const nextUrl = new URL(href, window.location.href);
+    const currentUrl = new URL(window.location.href);
+
+    if (nextUrl.origin === currentUrl.origin && nextUrl.pathname !== currentUrl.pathname) {
+      setIsNavigating(true);
+    }
+  }
+
   return (
     <LearningProvider>
-      <main className="app-shell">
+      <main className="app-shell" onClickCapture={handleNavigation}>
+        {isNavigating && <NavigationLoader />}
         <Sidebar />
         <section className="content">{children}</section>
       </main>
     </LearningProvider>
+  );
+}
+
+export function NavigationLoader() {
+  return (
+    <div className="navigation-loader" role="status" aria-live="polite" aria-label="Loading page">
+      <div className="loader-bar" />
+      <div className="loader-pill">
+        <span className="loader-spinner" />
+        Loading
+      </div>
+    </div>
   );
 }
 
@@ -38,7 +88,7 @@ function Sidebar() {
       <Link className="brand" href="/">
         <div className="brand-mark">学</div>
         <div>
-          <strong>Minato</strong>
+          <strong>Musashi_Kana</strong>
           <span>JLPT Studio</span>
         </div>
       </Link>
