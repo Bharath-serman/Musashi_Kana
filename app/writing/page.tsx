@@ -21,99 +21,45 @@ const passingScore = 60;
 const hiragana = ["あ", "い", "う", "え", "お", "か", "き", "く", "け", "こ", "さ", "し", "す", "せ", "そ", "た", "ち", "つ", "て", "と", "な", "に", "ぬ", "ね", "の", "は", "ひ", "ふ", "へ", "ほ", "ま", "み", "む", "め", "も", "や", "ゆ", "よ", "ら", "り", "る", "れ", "ろ", "わ", "を", "ん"];
 const katakana = ["ア", "イ", "ウ", "エ", "オ", "カ", "キ", "ク", "ケ", "コ", "サ", "シ", "ス", "セ", "ソ", "タ", "チ", "ツ", "テ", "ト", "ナ", "ニ", "ヌ", "ネ", "ノ", "ハ", "ヒ", "フ", "ヘ", "ホ", "マ", "ミ", "ム", "メ", "モ", "ヤ", "ユ", "ヨ", "ラ", "リ", "ル", "レ", "ロ", "ワ", "ヲ", "ン"];
 
-const strokeOrders: Record<string, string[]> = {
-  あ: ["Left curved vertical stroke.", "Top horizontal stroke.", "Large looping stroke through the center."],
-  い: ["Left curved down stroke.", "Shorter right curved down stroke."],
-  う: ["Small top stroke.", "Main curved stroke from upper left around to the right."],
-  え: ["Small top stroke.", "Horizontal stroke, then sweep down and right."],
-  お: ["Horizontal stroke.", "Vertical stroke with lower loop.", "Small right-side dot."],
-  か: ["Left vertical curve with hook.", "Upper-right angled stroke.", "Small right-side stroke."],
-  き: ["Top horizontal stroke.", "Second horizontal stroke.", "Long curved lower stroke."],
-  く: ["Single angled stroke from upper right to lower right through the left point."],
-  け: ["Left vertical stroke.", "Right horizontal stroke.", "Right vertical curve."],
-  こ: ["Upper horizontal stroke.", "Lower horizontal stroke."],
-  さ: ["Top horizontal stroke.", "Middle horizontal stroke.", "Lower curved stroke."],
-  し: ["Single long stroke curving from top left to lower right."],
-  す: ["Top horizontal stroke.", "Vertical stroke through the center, looping at the bottom."],
-  せ: ["Long horizontal stroke.", "Left vertical stroke.", "Right vertical stroke with turn."],
-  そ: ["Top angled stroke.", "Long sweeping curve across and down."],
-  た: ["Left horizontal stroke.", "Left vertical stroke.", "Upper-right horizontal stroke.", "Lower-right horizontal stroke."],
-  ち: ["Top horizontal stroke.", "Curved stroke down and around to the right."],
-  つ: ["Single curved stroke from left to right."],
-  て: ["Single stroke across, down, then sweeping left."],
-  と: ["Short diagonal stroke.", "Long curved lower stroke."],
-  な: ["Left horizontal stroke.", "Left vertical stroke.", "Right diagonal stroke.", "Looping lower-right stroke."],
-  に: ["Left vertical stroke.", "Upper-right horizontal stroke.", "Lower-right horizontal stroke."],
-  ぬ: ["Left curved stroke.", "Large looping stroke crossing through the center."],
-  ね: ["Left vertical stroke.", "Right looping stroke with final sweep."],
-  の: ["Single circular stroke starting near the top."],
-  は: ["Left vertical stroke.", "Right horizontal stroke.", "Right vertical stroke with loop."],
-  ひ: ["Single wide curved stroke from left to right."],
-  ふ: ["Small top stroke.", "Left lower stroke.", "Right lower stroke.", "Center sweeping stroke."],
-  へ: ["Single angled roof stroke."],
-  ほ: ["Left vertical stroke.", "Top horizontal stroke.", "Middle horizontal stroke.", "Right vertical loop."],
-  ま: ["Top horizontal stroke.", "Middle horizontal stroke.", "Vertical stroke with lower loop."],
-  み: ["Upper curved stroke.", "Long sweeping stroke around the lower side."],
-  む: ["Left vertical stroke.", "Looping middle stroke.", "Small right-side stroke."],
-  め: ["Left curved stroke.", "Large crossing loop stroke."],
-  も: ["Horizontal stroke.", "Second horizontal stroke.", "Vertical curved stroke."],
-  や: ["Short left stroke.", "Main stroke through the center.", "Small upper-right stroke."],
-  ゆ: ["Left vertical curve.", "Large right loop stroke."],
-  よ: ["Top horizontal stroke.", "Vertical stroke with lower curve."],
-  ら: ["Small top stroke.", "Main curved lower stroke."],
-  り: ["Left short down stroke.", "Right longer down stroke."],
-  る: ["Angled top stroke continuing into a lower loop."],
-  れ: ["Left vertical stroke.", "Right zig-zag stroke with final sweep."],
-  ろ: ["Angled top stroke continuing into a lower curve."],
-  わ: ["Left vertical stroke.", "Right looping stroke."],
-  を: ["Top horizontal stroke.", "Middle angled stroke.", "Lower sweeping stroke."],
-  ん: ["Single stroke curving down, up, then right."],
-  ア: ["Top horizontal stroke with downward turn.", "Down-left diagonal stroke."],
-  イ: ["Long left-falling diagonal stroke.", "Vertical stroke."],
-  ウ: ["Small top stroke.", "Outer angled frame.", "Inner vertical stroke."],
-  エ: ["Top horizontal stroke.", "Center vertical stroke.", "Bottom horizontal stroke."],
-  オ: ["Top horizontal stroke.", "Vertical stroke with hook.", "Left-falling diagonal stroke."],
-  カ: ["Top horizontal stroke with downward turn.", "Diagonal stroke down left."],
-  キ: ["Top horizontal stroke.", "Second horizontal stroke.", "Vertical stroke."],
-  ク: ["Short upper stroke.", "Long diagonal stroke down left."],
-  ケ: ["Short upper-left stroke.", "Top horizontal stroke.", "Long vertical stroke."],
-  コ: ["Top horizontal stroke with right side.", "Bottom horizontal stroke."],
-  サ: ["Left vertical stroke.", "Right vertical stroke.", "Top horizontal stroke."],
-  シ: ["Short upper-left stroke.", "Short middle-left stroke.", "Long sweeping lower stroke."],
-  ス: ["Top angled stroke.", "Long diagonal crossing stroke."],
-  セ: ["Horizontal stroke.", "Vertical stroke with turn."],
-  ソ: ["Short left stroke.", "Long right diagonal stroke."],
-  タ: ["Short top stroke.", "Outer diagonal stroke.", "Inner diagonal stroke."],
-  チ: ["Top horizontal stroke.", "Middle horizontal stroke.", "Vertical stroke."],
-  ツ: ["Short upper-left stroke.", "Short middle-left stroke.", "Long right diagonal stroke."],
-  テ: ["Top horizontal stroke.", "Middle horizontal stroke.", "Vertical stroke."],
-  ト: ["Vertical stroke.", "Short right diagonal stroke."],
-  ナ: ["Horizontal stroke.", "Vertical stroke."],
-  ニ: ["Top horizontal stroke.", "Bottom horizontal stroke."],
-  ヌ: ["Top angled stroke.", "Long crossing diagonal stroke."],
-  ネ: ["Small top stroke.", "Center angled stroke.", "Vertical stroke.", "Right diagonal stroke."],
-  ノ: ["Single diagonal stroke down left."],
-  ハ: ["Left diagonal stroke.", "Right diagonal stroke."],
-  ヒ: ["Horizontal stroke.", "Vertical stroke with lower turn."],
-  フ: ["Top horizontal stroke with downward angle."],
-  ヘ: ["Single angled roof stroke."],
-  ホ: ["Top horizontal stroke.", "Vertical stroke.", "Left small diagonal.", "Right small diagonal."],
-  マ: ["Top angled frame stroke.", "Inner diagonal stroke."],
-  ミ: ["Top diagonal stroke.", "Middle diagonal stroke.", "Bottom diagonal stroke."],
-  ム: ["Diagonal stroke down left.", "Bottom angled stroke."],
-  メ: ["Short diagonal stroke.", "Long crossing diagonal stroke."],
-  モ: ["Top horizontal stroke.", "Middle horizontal stroke.", "Vertical stroke with turn."],
-  ヤ: ["Short left stroke.", "Main angled stroke.", "Vertical stroke."],
-  ユ: ["Top horizontal stroke with right side.", "Bottom horizontal stroke."],
-  ヨ: ["Top horizontal stroke with right side.", "Middle horizontal stroke.", "Bottom horizontal stroke."],
-  ラ: ["Top horizontal stroke.", "Lower horizontal stroke with diagonal finish."],
-  リ: ["Left vertical stroke.", "Right vertical stroke."],
-  ル: ["Left vertical stroke.", "Right stroke with lower sweep."],
-  レ: ["Vertical stroke with lower sweep right."],
-  ロ: ["Top and sides box stroke.", "Bottom horizontal stroke."],
-  ワ: ["Top horizontal stroke with right side.", "Long diagonal stroke down left."],
-  ヲ: ["Top horizontal stroke with right side.", "Middle horizontal stroke.", "Lower diagonal stroke."],
-  ン: ["Short upper-left stroke.", "Long lower sweeping stroke."]
+const hiraganaRomaji: Record<string, string> = {
+  "あ": "a", "い": "i", "う": "u", "え": "e", "お": "o",
+  "か": "ka", "き": "ki", "く": "ku", "け": "ke", "こ": "ko",
+  "さ": "sa", "し": "shi", "す": "su", "せ": "se", "そ": "so",
+  "た": "ta", "ち": "chi", "つ": "tsu", "て": "te", "と": "to",
+  "な": "na", "に": "ni", "ぬ": "nu", "ね": "ne", "の": "no",
+  "は": "ha", "ひ": "hi", "ふ": "fu", "へ": "he", "ほ": "ho",
+  "ま": "ma", "み": "mi", "む": "mu", "め": "me", "も": "mo",
+  "や": "ya", "ゆ": "yu", "よ": "yo",
+  "ら": "ra", "り": "ri", "る": "ru", "れ": "re", "ろ": "ro",
+  "わ": "wa", "を": "wo", "ん": "n"
+};
+
+const katakanaRomaji: Record<string, string> = {
+  "ア": "a", "イ": "i", "ウ": "u", "エ": "e", "オ": "o",
+  "カ": "ka", "キ": "ki", "ク": "ku", "ケ": "ke", "コ": "ko",
+  "サ": "sa", "シ": "shi", "ス": "su", "セ": "se", "ソ": "so",
+  "タ": "ta", "チ": "chi", "ツ": "tsu", "テ": "te", "ト": "to",
+  "ナ": "na", "ニ": "ni", "ヌ": "nu", "ネ": "ne", "ノ": "no",
+  "ハ": "ha", "ヒ": "hi", "フ": "fu", "ヘ": "he", "ホ": "ho",
+  "マ": "ma", "ミ": "mi", "ム": "mu", "メ": "me", "モ": "mo",
+  "ヤ": "ya", "ユ": "yu", "ヨ": "yo",
+  "ラ": "ra", "リ": "ri", "ル": "ru", "レ": "re", "ロ": "ro",
+  "ワ": "wa", "ヲ": "wo", "ン": "n"
+};
+
+const getKanjiRomaji = (symbol: string): string => {
+  const kanjiItem = [...course.N5.kanji, ...course.N4.kanji].find(item => item.front === symbol);
+  if (kanjiItem) {
+    const reading = kanjiItem.reading.split("・")[0].split("/")[0].trim();
+    return reading;
+  }
+  return symbol;
+};
+
+const getRomaji = (symbol: string): string => {
+  if (hiraganaRomaji[symbol]) return hiraganaRomaji[symbol];
+  if (katakanaRomaji[symbol]) return katakanaRomaji[symbol];
+  return getKanjiRomaji(symbol);
 };
 
 export default function WritingPage() {
@@ -305,6 +251,7 @@ function Writing() {
             {visibleSection.symbols.map((symbol) => {
               const isCompleted = completedSymbols.has(symbol);
               const isActive = writingSymbol === symbol;
+              const romaji = getRomaji(symbol);
               return (
                 <button
                   className={`${isActive ? "active" : ""} ${isCompleted ? "completed" : ""}`}
@@ -312,7 +259,8 @@ function Writing() {
                   onClick={() => selectSymbol(symbol)}
                   type="button"
                 >
-                  {symbol}
+                  <span className="symbol-character">{symbol}</span>
+                  <span className="symbol-romaji">{romaji}</span>
                 </button>
               );
             })}
@@ -348,25 +296,84 @@ function Writing() {
             </div>
             <p className={`accuracy-feedback ${feedback.tone}`}>{feedback.text}</p>
           </div>
-
           <aside className="stroke-order-card" aria-label={`${writingSymbol} stroke order`}>
-            <span>{activeSection.title}</span>
-            <h2>{writingSymbol} stroke order</h2>
-            <div className="stroke-order-board">
-              <div className="stroke-step-preview final hero">
-                <span className="stroke-step-glyph">{writingSymbol}</span>
-              </div>
-              {(strokeOrders[writingSymbol] ?? ["Follow the guide from top to bottom.", "Keep the final shape inside the faint character."]).map((step, index) => (
-                <div className="stroke-step-preview" key={`${writingSymbol}-${index + 1}`}>
-                  <span className="stroke-step-number">{index + 1}</span>
-                  <StrokeMark kind={getStrokeKind(step)} />
-                </div>
-              ))}
-            </div>
+            <StrokeOrderVisualizer symbol={writingSymbol} sectionTitle={activeSection.title} />
             <p className="stroke-order-note">Build the character in order, one boxed stroke at a time.</p>
           </aside>
         </div>
       </section>
+    </>
+  );
+}
+
+function StrokeOrderVisualizer({ symbol, sectionTitle }: { symbol: string; sectionTitle: string }) {
+  const [paths, setPaths] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchSvg() {
+      setLoading(true);
+      try {
+        const hex = symbol.charCodeAt(0).toString(16).padStart(5, "0");
+        const url = `https://cdn.jsdelivr.net/gh/kanjivg/kanjivg@master/kanji/${hex}.svg`;
+        const res = await fetch(url);
+        if (!res.ok) throw new Error("SVG not found");
+        const text = await res.text();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(text, "image/svg+xml");
+        const pathElements = Array.from(doc.querySelectorAll("path"));
+        const dValues = pathElements.map((p) => p.getAttribute("d") || "");
+        setPaths(dValues);
+      } catch (err) {
+        setPaths([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchSvg();
+  }, [symbol]);
+
+  if (loading) {
+    return (
+      <div className="stroke-order-board">
+        <div className="stroke-order-loading">Fetching stroke data for {symbol}...</div>
+      </div>
+    );
+  }
+
+  if (paths.length === 0) {
+    return (
+      <div className="stroke-order-board">
+        <div className="stroke-order-error">Visual stroke guide unavailable for {symbol}</div>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <span>{sectionTitle}</span>
+      <h2>{symbol} stroke order</h2>
+      <div className="stroke-order-board">
+        <div className="stroke-step-preview final hero">
+          <svg viewBox="0 0 109 109" className="stroke-order-svg">
+            {paths.map((p, j) => (
+              <path key={`hero-${j}`} d={p} className="stroke-path past" style={{ stroke: "#4169e1", strokeWidth: 3.5 }} />
+            ))}
+          </svg>
+        </div>
+        {paths.map((path, i) => (
+          <div key={i} className="stroke-step-preview">
+            <span className="stroke-step-number">{i + 1}</span>
+            <svg viewBox="0 0 109 109" className="stroke-order-svg">
+              {paths.map((p, j) => (
+                <path key={`ghost-${j}`} d={p} className="stroke-path ghost" />
+              ))}
+              {/* ONLY the Current stroke for this box */}
+              <path d={paths[i]} className="stroke-path current" />
+            </svg>
+          </div>
+        ))}
+      </div>
     </>
   );
 }
@@ -408,27 +415,6 @@ function uniqueSymbols(symbols: string[]) {
 
 function isKanjiLike(symbol: string) {
   return !hiragana.includes(symbol) && !katakana.includes(symbol);
-}
-
-function getStrokeKind(step: string) {
-  const lower = step.toLowerCase();
-  if (lower.includes("loop")) return "loop";
-  if (lower.includes("curve")) return "curve";
-  if (lower.includes("diagonal") || lower.includes("angled")) return "diagonal";
-  if (lower.includes("vertical")) return "vertical";
-  return "horizontal";
-}
-
-function StrokeMark({ kind }: { kind: StrokeKind }) {
-  return (
-    <svg aria-hidden="true" className="stroke-mark-svg" viewBox="0 0 100 100">
-      {kind === "horizontal" ? <path d="M18 48 L82 48" /> : null}
-      {kind === "vertical" ? <path d="M50 18 L50 82" /> : null}
-      {kind === "diagonal" ? <path d="M72 18 L28 82" /> : null}
-      {kind === "curve" ? <path d="M70 22 Q36 32 34 74" /> : null}
-      {kind === "loop" ? <path d="M62 24 Q30 26 28 56 Q28 78 50 78 Q72 78 72 56 Q72 42 60 38" /> : null}
-    </svg>
-  );
 }
 
 function measureAccuracy(symbol: string, strokes: Point[][]) {
