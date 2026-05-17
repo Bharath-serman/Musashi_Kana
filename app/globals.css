@@ -1,17 +1,17 @@
 :root {
   color-scheme: light;
-  --ink: #141b28;
-  --muted: #667085;
-  --line: #d8dee8;
+  --ink: #2a1f26;
+  --muted: #857078;
+  --line: #f2e3e8;
   --paper: #ffffff;
-  --soft: #f3f6fa;
-  --panel: #fbfcff;
-  --blue: #2557d6;
-  --blue-dark: #153a98;
-  --red: #d84d43;
+  --soft: #fdf8fa;
+  --panel: #fffbfc;
+  --blue: #e88ba1;
+  --blue-dark: #c96078;
+  --red: #d84d63;
   --green: #13805f;
   --amber: #b87919;
-  --shadow: 0 20px 60px rgba(20, 27, 40, 0.11);
+  --shadow: 0 20px 60px rgba(42, 31, 38, 0.09);
 }
 
 * {
@@ -24,14 +24,20 @@ html {
 
 body {
   margin: 0;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.7), rgba(243, 246, 250, 0.95)),
-    radial-gradient(circle at 84% 12%, rgba(216, 77, 67, 0.12), transparent 26%),
-    radial-gradient(circle at 6% 40%, rgba(37, 87, 214, 0.13), transparent 28%),
-    var(--soft);
+  background: 
+    linear-gradient(180deg, rgba(255, 255, 255, 0.6), rgba(253, 248, 250, 0.85)),
+    linear-gradient(-45deg, #fce4ec, #f8bbd0, #fff0f5, #ffcdd2);
+  background-size: 400% 400%;
+  animation: cinematic-bg 20s ease infinite;
   color: var(--ink);
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   line-height: 1.5;
+}
+
+@keyframes cinematic-bg {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 button,
@@ -57,7 +63,7 @@ a:hover {
 button:focus-visible,
 a:focus-visible,
 .study-card:focus-visible {
-  outline: 3px solid rgba(37, 87, 214, 0.28);
+  outline: 3px solid rgba(232, 139, 161, 0.28);
   outline-offset: 2px;
 }
 
@@ -239,7 +245,7 @@ a:focus-visible,
 .segmented button.active {
   background: var(--paper);
   color: var(--blue);
-  box-shadow: 0 8px 18px rgba(20, 27, 40, 0.1);
+  box-shadow: 0 8px 18px rgba(42, 31, 38, 0.1);
 }
 
 .content {
@@ -264,7 +270,7 @@ a:focus-visible,
   inset: 0 0 auto;
   height: 3px;
   overflow: hidden;
-  background: rgba(37, 87, 214, 0.14);
+  background: rgba(232, 139, 161, 0.14);
 }
 
 .loader-bar::after {
@@ -289,7 +295,7 @@ a:focus-visible,
   border: 1px solid var(--line);
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.92);
-  box-shadow: 0 14px 35px rgba(20, 27, 40, 0.12);
+  box-shadow: 0 14px 35px rgba(42, 31, 38, 0.12);
   color: var(--ink);
   font-size: 0.9rem;
   font-weight: 850;
@@ -299,7 +305,7 @@ a:focus-visible,
 .loader-spinner {
   width: 16px;
   aspect-ratio: 1;
-  border: 2px solid rgba(37, 87, 214, 0.2);
+  border: 2px solid rgba(232, 139, 161, 0.2);
   border-top-color: var(--blue);
   border-radius: 50%;
   animation: spin 700ms linear infinite;
@@ -366,7 +372,7 @@ a:focus-visible,
   border: 1px solid var(--line);
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.84);
-  box-shadow: 0 14px 35px rgba(20, 27, 40, 0.07);
+  box-shadow: 0 14px 35px rgba(42, 31, 38, 0.07);
 }
 
 @keyframes loading-bar {
@@ -438,7 +444,7 @@ a:focus-visible,
   gap: 8px;
   min-height: 34px;
   padding: 0 12px;
-  border: 1px solid rgba(37, 87, 214, 0.2);
+  border: 1px solid rgba(232, 139, 161, 0.2);
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.74);
   color: var(--blue-dark);
@@ -518,7 +524,7 @@ h1 {
   border: 1px solid rgba(255, 255, 255, 0.55);
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.88);
-  box-shadow: 0 16px 45px rgba(20, 27, 40, 0.14);
+  box-shadow: 0 16px 45px rgba(42, 31, 38, 0.14);
   backdrop-filter: blur(16px);
 }
 
@@ -549,7 +555,7 @@ h1 {
   border: 1px solid var(--line);
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 14px 35px rgba(20, 27, 40, 0.07);
+  box-shadow: 0 14px 35px rgba(42, 31, 38, 0.07);
 }
 
 .metrics article {
@@ -777,7 +783,7 @@ h1 {
   bottom: 22px;
   width: 220px;
   aspect-ratio: 1;
-  border: 18px solid rgba(216, 77, 67, 0.16);
+  border: 18px solid rgba(216, 77, 99, 0.16);
   border-radius: 50%;
 }
 
@@ -878,7 +884,7 @@ h1 {
   border: 1px solid var(--line);
   border-radius: 8px;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(246, 249, 254, 0.92));
-  box-shadow: 0 10px 24px rgba(20, 27, 40, 0.05);
+  box-shadow: 0 10px 24px rgba(42, 31, 38, 0.05);
 }
 
 .grammar-topic-link strong {
@@ -894,7 +900,7 @@ h1 {
 .grammar-topic-link:hover {
   border-color: var(--blue);
   background: #eef3fb;
-  box-shadow: 0 10px 22px rgba(37, 87, 214, 0.08);
+  box-shadow: 0 10px 22px rgba(232, 139, 161, 0.08);
 }
 
 .grammar-detail-layout {
@@ -1160,7 +1166,7 @@ details p {
   place-items: center;
   padding: 20px;
   border-radius: 8px;
-  background: rgba(20, 27, 40, 0.26);
+  background: rgba(42, 31, 38, 0.26);
   backdrop-filter: blur(4px);
 }
 
@@ -1171,7 +1177,7 @@ details p {
   border-radius: 8px;
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(231, 246, 240, 0.96));
-  box-shadow: 0 22px 60px rgba(20, 27, 40, 0.18);
+  box-shadow: 0 22px 60px rgba(42, 31, 38, 0.18);
   text-align: center;
 }
 
@@ -1233,7 +1239,7 @@ details p {
 .kana-tabs button.active {
   background: var(--paper);
   color: var(--blue);
-  box-shadow: 0 8px 18px rgba(20, 27, 40, 0.1);
+  box-shadow: 0 8px 18px rgba(42, 31, 38, 0.1);
 }
 
 .kana-section {
@@ -1306,8 +1312,8 @@ canvas {
   border: 1px solid var(--line);
   border-radius: 8px;
   background:
-    linear-gradient(to right, transparent 49.7%, rgba(216, 77, 67, 0.28) 49.8%, rgba(216, 77, 67, 0.28) 50.2%, transparent 50.3%),
-    linear-gradient(to bottom, transparent 49.7%, rgba(216, 77, 67, 0.28) 49.8%, rgba(216, 77, 67, 0.28) 50.2%, transparent 50.3%),
+    linear-gradient(to right, transparent 49.7%, rgba(216, 77, 99, 0.28) 49.8%, rgba(216, 77, 99, 0.28) 50.2%, transparent 50.3%),
+    linear-gradient(to bottom, transparent 49.7%, rgba(216, 77, 99, 0.28) 49.8%, rgba(216, 77, 99, 0.28) 50.2%, transparent 50.3%),
     repeating-linear-gradient(0deg, #fff, #fff 63px, #edf1f7 64px),
     repeating-linear-gradient(90deg, transparent, transparent 63px, #edf1f7 64px);
   touch-action: none;
@@ -1337,7 +1343,7 @@ canvas {
 }
 
 .accuracy-feedback.error {
-  border-color: rgba(216, 77, 67, 0.35);
+  border-color: rgba(216, 77, 99, 0.35);
   background: #fff0ee;
   color: var(--red);
 }
@@ -1423,7 +1429,7 @@ canvas {
   inset: 0;
   display: grid;
   place-items: center;
-  color: rgba(20, 27, 40, 0.06);
+  color: rgba(42, 31, 38, 0.06);
   font-size: 3.8rem;
   font-weight: 900;
   pointer-events: none;
