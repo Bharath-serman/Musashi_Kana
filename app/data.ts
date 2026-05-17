@@ -58,6 +58,14 @@ export const course = {
       { front: "川", reading: "かわ", meaning: "river", example: "川のそばにあります。", note: "Three flowing strokes." },
       { front: "本", reading: "ほん", meaning: "book; origin", example: "本を読みます。", note: "Also appears in 日本." }
     ],
+    numbers: [
+      { front: "一", reading: "いち", meaning: "one", example: "一人がいます。", note: "Basic number" },
+      { front: "二", reading: "に", meaning: "two", example: "二時です。", note: "Basic number" }
+    ],
+    particles: [
+      { front: "は", reading: "wa", meaning: "topic marker", example: "これは本です。", note: "Grammar particle" },
+      { front: "を", reading: "o", meaning: "object marker", example: "水を飲みます。", note: "Grammar particle" }
+    ],
     grammar: [
       { pattern: "A は B です", meaning: "A is B.", example: "私は学生です。", tip: "は marks the topic, not always the subject." },
       { pattern: "N を Vます", meaning: "Marks the direct object.", example: "パンを食べます。", tip: "Use を before the action verb." },
@@ -122,6 +130,14 @@ export const course = {
       { front: "弱", reading: "よわい", meaning: "weak", example: "漢字が少し弱いです。", note: "Opposite of 強い." },
       { front: "運", reading: "はこぶ・うん", meaning: "carry; luck", example: "荷物を運びます。", note: "Appears in 運動." }
     ],
+    numbers: [
+      { front: "三", reading: "さん", meaning: "three", example: "三日です。", note: "Basic number" },
+      { front: "四", reading: "よん / し", meaning: "four", example: "四時です。", note: "Basic number" }
+    ],
+    particles: [
+      { front: "で", reading: "de", meaning: "location/method marker", example: "駅で待ちます。", note: "Grammar particle" },
+      { front: "と", reading: "to", meaning: "with marker", example: "友だちと話します。", note: "Grammar particle" }
+    ],
     grammar: [
       { pattern: "Vて います", meaning: "Ongoing action or resulting state.", example: "今、本を読んでいます。", tip: "Also describes wearing, living, knowing." },
       { pattern: "Vた ことがあります", meaning: "Have experienced doing something.", example: "京都へ行ったことがあります。", tip: "Use past plain form before こと." },
@@ -159,6 +175,8 @@ export const course = {
   roadmap: string[][];
   vocab: Card[];
   kanji: Card[];
+  numbers: Card[];
+  particles: Card[];
   grammar: Grammar[];
   reading: {
     title: string;
