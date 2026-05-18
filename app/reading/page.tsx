@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AppFrame, PageHeader } from "../components/app-frame";
 import { useLearning } from "../components/learning-state";
+import { supabase } from "../lib/supabase";
 
 export default function ReadingPage() {
   return (
@@ -13,8 +14,60 @@ export default function ReadingPage() {
 }
 
 function Reading() {
-  const { data, level } = useLearning();
+  const { level } = useLearning();
   const [showTranslation, setShowTranslation] = useState(false);
+  const [passages, setPassages] = useState<{
+    title: string;
+    japanese: string;
+    translation: string;
+    questions: string[][];
+  }[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchData() {
+      setLoading(true);
+      setError(null);
+      
+      try {
+        const { data: passagesData, error: passagesError } = await supabase
+          .from('reading_passages')
+          .select(`
+            id,
+            title,
+            japanese,
+            translation,
+            reading_questions (
+              question,
+              answer
+            )
+          `)
+          .eq('level', level);
+
+        if (passagesError) {
+          setError(passagesError.message);
+          setLoading(false);
+          return;
+        }
+
+        const transformedData = passagesData ? passagesData.map((p: any) => ({
+          title: p.title,
+          japanese: p.japanese,
+          translation: p.translation,
+          questions: p.reading_questions ? p.reading_questions.map((q: any) => [q.question, q.answer]) : []
+        })) : [];
+
+        setPassages(transformedData);
+      } catch (err: any) {
+        setError(err.message || "An error occurred");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchData();
+  }, [level]);
 
   return (
     <>
@@ -25,24 +78,39 @@ function Reading() {
         action={<button onClick={() => setShowTranslation((current) => !current)} type="button">{showTranslation ? "Hide" : "Show"} translation</button>}
       />
 
-      <section className="panel reading-panel">
-        <div className="section-heading">
-          <div>
-            <span>Passage</span>
-            <h2>{data.reading.title}</h2>
-          </div>
-        </div>
-        <p className="reading-text" lang="ja">{data.reading.japanese}</p>
-        {showTranslation && <p className="translation">{data.reading.translation}</p>}
-        <div className="question-stack">
-          {data.reading.questions.map(([question, answer]) => (
-            <details key={question}>
-              <summary>{question}</summary>
-              <p>{answer}</p>
+      {loading && <p>Loading passages...</p>}
+      {error && <p style={{ color: "red" }}>Error: {error}</p>}
+      
+      {!loading && !error && passages.length === 0 && (
+        <p>No passages found for this level. Add some in Supabase!</p>
+      )}
+
+      {!loading && !error && passages.length > 0 && (
+        <div style={{ marginTop: "20px", display: "grid", gap: "16px" }}>
+          {passages.map((passage, index) => (
+            <details key={index} className="panel reading-panel">
+              <summary className="section-heading" style={{ cursor: "pointer" }}>
+                <div>
+                  <span>Passage</span>
+                  <h2>{passage.title}</h2>
+                </div>
+              </summary>
+              <div style={{ marginTop: "16px" }}>
+                <p className="reading-text" lang="ja">{passage.japanese}</p>
+                {showTranslation && <p className="translation">{passage.translation}</p>}
+                <div className="question-stack" style={{ marginTop: "16px" }}>
+                  {passage.questions.map(([question, answer]) => (
+                    <details key={question}>
+                      <summary style={{ cursor: "pointer" }}>{question}</summary>
+                      <p>{answer}</p>
+                    </details>
+                  ))}
+                </div>
+              </div>
             </details>
           ))}
         </div>
-      </section>
+      )}
     </>
   );
 }
