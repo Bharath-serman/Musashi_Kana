@@ -2,10 +2,13 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { useState, useEffect } from "react";
 import { ChevronLeft } from "lucide-react";
 import { AppFrame, PageHeader } from "../../components/app-frame";
 import { useLearning } from "../../components/learning-state";
-import { getGrammarLesson, getGrammarTopicBySlugAny } from "../grammar-content";
+import { supabase } from "../../lib/supabase";
+import { slugifyGrammar } from "../grammar-content";
+import { course, Level } from "../../data";
 
 export default function GrammarTopicPage() {
   return (
@@ -17,25 +20,50 @@ export default function GrammarTopicPage() {
 
 function GrammarTopicDetail() {
   const { slug } = useParams<{ slug: string }>();
-  const { level: currentLevel } = useLearning();
-  const fallback = getGrammarTopicBySlugAny(slug);
-  const resolvedLevel = fallback?.level ?? currentLevel;
-  const topic = fallback?.topic ?? null;
+  const [lesson, setLesson] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  if (!topic) {
+  useEffect(() => {
+    async function fetchLesson() {
+      setLoading(true);
+      setError(null);
+      
+      try {
+        const { data, error } = await supabase
+          .from('grammar_lessons')
+          .select('*');
+
+        if (error) {
+          setError(error.message);
+        } else if (data) {
+          const match = data.find(item => slugifyGrammar(item.topic) === slug);
+          setLesson(match);
+        }
+      } catch (err: any) {
+        setError(err.message || "An error occurred");
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchLesson();
+  }, [slug]);
+
+  if (loading) return <PageHeader eyebrow="Patterns" title="Loading..." text="Please wait." />;
+  if (error) return <PageHeader eyebrow="Patterns" title="Error" text={error} />;
+  
+  if (!lesson) {
     return (
-      <>
-        <PageHeader
-          eyebrow="Patterns"
-          title={`${resolvedLevel} grammar lab`}
-          text="That grammar topic is not available for the current level."
-          action={<Link className="secondary-action" href="/grammar">Back to topics</Link>}
-        />
-      </>
+      <PageHeader
+        eyebrow="Patterns"
+        title="Lesson not found"
+        text="That grammar topic is not available."
+        action={<Link className="secondary-action" href="/grammar">Back to topics</Link>}
+      />
     );
   }
 
-  const lesson = getGrammarLesson(resolvedLevel, topic);
+  const topicData = course[lesson.level as Level]?.grammar.find((g: any) => g.pattern === lesson.pattern);
 
   return (
     <>
@@ -49,16 +77,16 @@ function GrammarTopicDetail() {
       <section className="grammar-detail-layout panel">
         <article className="grammar-lesson-shell">
           <div className="grammar-hero">
-            <code>{topic.pattern}</code>
+            <code>{lesson.pattern}</code>
             <h2>{lesson.title}</h2>
-            <p>{topic.meaning}</p>
+            <p>{topicData?.meaning}</p>
           </div>
 
           <div className="grammar-detail-grid">
             <section className="grammar-detail-card">
               <span>How it works</span>
               <ul className="grammar-note-list">
-                {lesson.notes.map((note) => (
+                {lesson.notes.map((note: string) => (
                   <li key={note}>{note}</li>
                 ))}
               </ul>
@@ -66,15 +94,15 @@ function GrammarTopicDetail() {
 
             <section className="grammar-detail-card">
               <span>Core example</span>
-              <p className="grammar-jp-example" lang="ja">{topic.example}</p>
-              <p className="grammar-tip-text">{topic.tip}</p>
+              <p className="grammar-jp-example" lang="ja">{topicData?.example}</p>
+              <p className="grammar-tip-text">{topicData?.tip}</p>
             </section>
           </div>
 
           <section className="grammar-detail-card">
             <span>Examples</span>
             <div className="grammar-example-stack">
-              {lesson.examples.map((example) => (
+              {lesson.examples.map((example: { jp: string; en: string }) => (
                 <div className="grammar-example-row" key={example.jp}>
                   <p lang="ja">{example.jp}</p>
                   <small>{example.en}</small>
@@ -90,16 +118,16 @@ function GrammarTopicDetail() {
                 <table className="grammar-chart">
                   <thead>
                     <tr>
-                      {lesson.chart.headers.map((header) => (
+                      {lesson.chart.headers.map((header: string) => (
                         <th key={header}>{header}</th>
                       ))}
                     </tr>
                   </thead>
                   <tbody>
-                    {lesson.chart.rows.map((row) => (
-                      <tr key={row.join("-")}>
-                        {row.map((cell) => (
-                          <td key={cell}>{cell}</td>
+                    {lesson.chart.rows.map((row: string[], idx: number) => (
+                      <tr key={idx}>
+                        {row.map((cell: string, cidx: number) => (
+                          <td key={cidx}>{cell}</td>
                         ))}
                       </tr>
                     ))}

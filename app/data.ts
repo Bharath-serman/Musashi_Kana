@@ -74,18 +74,28 @@ export const course = {
       { pattern: "N じゃありません", meaning: "Negative of です.", example: "先生じゃありません。", tip: "Polite spoken negative." },
       { pattern: "い-adj + N", meaning: "Describe a noun directly.", example: "新しい本です。", tip: "Keep い before the noun." }
     ],
-    reading: {
-      title: "A morning at school",
-      japanese:
-        "私は毎朝七時に起きます。水を飲んで、パンを食べます。八時に学校へ行きます。学校で日本語を勉強します。友だちと昼ごはんを食べます。",
-      translation:
-        "I wake up at seven every morning. I drink water and eat bread. At eight I go to school. At school I study Japanese. I eat lunch with my friend.",
-      questions: [
-        ["何時に起きますか。", "七時"],
-        ["どこへ行きますか。", "学校"],
-        ["何を勉強しますか。", "日本語"]
-      ]
-    },
+    reading: [
+      {
+        title: "Lily's diary",
+        japanese: "リリーの日記です。今日は天気がとてもいいです。朝早く起きて、近くの公園を散歩しました。公園にはきれいな花がたくさん咲いていました。午後からは図書館へ行って、日本語の本を読みます。夜は友だちとレストランで晩ご飯を食べる予定です。とても楽しみです。",
+        translation: "This is Lily's diary. Today the weather is very nice. I woke up early in the morning and took a walk in a nearby park. Many beautiful flowers were blooming in the park. In the afternoon, I will go to the library and read a Japanese book. In the evening, I plan to eat dinner with a friend at a restaurant. I am looking forward to it.",
+        questions: [
+          ["リリーさんは朝どこへ行きましたか。", "近くの公園"],
+          ["公園には何がありましたか。", "きれいな花"],
+          ["夜は何をしますか。", "友だちと晩ご飯を食べます"]
+        ]
+      },
+      {
+        title: "Ordering food",
+        japanese: "レストランで食べ物を頼みます。メニューを見て、何がいいか考えます。私は魚が大好きですから、魚の料理とご飯を頼みました。飲み物は冷たいお茶にしました。料理はとても美味しくて、お腹がいっぱいになりました。最後にデザートも食べました。また来たいです。",
+        translation: "I order food at a restaurant. I look at the menu and think about what would be good. Since I love fish, I ordered a fish dish and rice. For the drink, I chose cold tea. The food was very delicious, and I became full. I also ate dessert at the end. I want to come again.",
+        questions: [
+          ["私は何を頼みましたか。", "魚の料理とご飯"],
+          ["飲み物は何にしましたか。", "冷たいお茶"],
+          ["最後に何を食べましたか。", "デザート"]
+        ]
+      }
+    ],
     writing: ["あ", "い", "う", "え", "お", "か", "き", "く", "け", "こ", "さ", "し", "す", "せ", "そ", "日", "月", "人", "本"],
     quiz: [
       { prompt: "学生 means...", choices: ["student", "teacher", "station", "library"], answer: "student" },
@@ -146,18 +156,28 @@ export const course = {
       { pattern: "A ので B", meaning: "Because A, B.", example: "雨なので、家にいます。", tip: "Softer than から in many contexts." },
       { pattern: "Vながら", meaning: "Do two actions at the same time.", example: "音楽を聞きながら勉強します。", tip: "Main action comes after ながら clause." }
     ],
-    reading: {
-      title: "A weekend plan",
-      japanese:
-        "土曜日に友だちと図書館で勉強するつもりです。来週テストがあるので、文法を復習しなければなりません。勉強したあとで、駅の近くの店で昼ごはんを食べます。",
-      translation:
-        "On Saturday I intend to study with a friend at the library. Because there is a test next week, I have to review grammar. After studying, we will eat lunch at a shop near the station.",
-      questions: [
-        ["どこで勉強するつもりですか。", "図書館"],
-        ["どうして文法を復習しますか。", "来週テストがあるので"],
-        ["勉強したあとで何をしますか。", "昼ごはんを食べます"]
-      ]
-    },
+    reading: [
+      {
+        title: "A trip to Kyoto",
+        japanese: "先週、京都へ旅行に行きました。京都には古いお寺や神社がたくさんあって、とても綺麗でした。着物を着て街を歩いている人も多かったです。私は金閣寺を見ましたが、金色に輝いていて感動しました。夜は有名な豆腐料理を食べました。少し高かったですが、とても美味しかったです。また行きたいです。",
+        translation: "Last week, I went on a trip to Kyoto. There are many old temples and shrines in Kyoto, and it was very beautiful. There were also many people walking the streets wearing kimonos. I saw Kinkaku-ji, and I was moved by how it shone in gold. In the evening, I ate famous tofu dishes. It was a bit expensive, but very delicious. I want to go again.",
+        questions: [
+          ["京都には何がたくさんありますか。", "古いお寺や神社"],
+          ["私は何を見て感動しましたか。", "金閣寺"],
+          ["夜に食べた料理はどうでしたか。", "少し高かったですが、とても美味しかった"]
+        ]
+      },
+      {
+        title: "Job Interview",
+        japanese: "明日は新しい仕事の面接があります。とても緊張しているので、今夜は早く寝るつもりです。面接では、これまでの経験や、どうしてこの会社で働きたいのかを聞かれると思います。自分の良いところをしっかりアピールできるように準備しました。スーツも新しく買いました。明日は頑張ります。",
+        translation: "Tomorrow I have a job interview for a new job. I am very nervous, so I intend to go to bed early tonight. In the interview, I think I will be asked about my past experiences and why I want to work at this company. I prepared so that I can properly appeal my good points. I also bought a new suit. I will do my best tomorrow.",
+        questions: [
+          ["明日は何がありますか。", "新しい仕事の面接"],
+          ["どうして今夜は早く寝ますか。", "とても緊張しているから"],
+          ["面接のために何を新しく買いましたか。", "スーツ"]
+        ]
+      }
+    ],
     writing: ["駅", "店", "病", "院", "強", "弱", "運", "動", "教", "室", "質", "問", "答", "習", "漢", "説", "明", "予", "定"],
     quiz: [
       { prompt: "Vたことがあります expresses...", choices: ["experience", "prohibition", "comparison", "location"], answer: "experience" },
@@ -183,7 +203,7 @@ export const course = {
     japanese: string;
     translation: string;
     questions: string[][];
-  };
+  }[];
   writing: string[];
   quiz: QuizQuestion[];
 }>;
