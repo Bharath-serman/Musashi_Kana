@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import type { MouseEvent, ReactNode } from "react";
-import { BookOpen, Brain, ChevronLeft, ClipboardList, GraduationCap, Languages, Layers, Map, Menu, PenLine, Target } from "lucide-react";
+import { BookOpen, Brain, ChevronLeft, ClipboardList, GraduationCap, Languages, Layers, Map, Menu, PenLine, Target, Sun, Moon } from "lucide-react";
 import { Level } from "../data";
 import { LearningProvider, useLearning } from "./learning-state";
 import CinematicBackground from "./cinematic-background";
@@ -80,48 +80,47 @@ export function AppFrame({ children }: { children: ReactNode }) {
   }
 
   return (
-    <LearningProvider>
-      <div style={{ position: "relative", minHeight: "100vh" }}>
-        <CinematicBackground />
+    <div style={{ position: "relative", minHeight: "100vh" }}>
+      <CinematicBackground />
+      <ThemeToggler />
 
-        <main
-          className={`app-shell ${isSidebarCollapsed ? "sidebar-collapsed" : ""}`}
-          onClickCapture={handleNavigation}
+      <main
+        className={`app-shell ${isSidebarCollapsed ? "sidebar-collapsed" : ""}`}
+        onClickCapture={handleNavigation}
+        style={{
+          display: "grid",
+          gridTemplateColumns: isSidebarCollapsed ? "80px minmax(0, 1fr)" : "280px minmax(0, 1fr)",
+          minHeight: "100vh",
+          transition: "grid-template-columns 0.3s ease"
+        }}
+      >
+        {isNavigating && <NavigationLoader />}
+
+        <Sidebar collapsed={isSidebarCollapsed} onToggle={() => setIsSidebarCollapsed(!isSidebarCollapsed)} />
+
+        <section
+          className="content"
           style={{
-            display: "grid",
-            gridTemplateColumns: isSidebarCollapsed ? "80px minmax(0, 1fr)" : "280px minmax(0, 1fr)",
-            minHeight: "100vh",
-            transition: "grid-template-columns 0.3s ease"
+            padding: "40px clamp(20px, 5vw, 60px)",
+            background: "var(--glass-bg)",
+            backdropFilter: "blur(5px)",
+            minHeight: "100vh"
           }}
         >
-          {isNavigating && <NavigationLoader />}
-
-          <Sidebar collapsed={isSidebarCollapsed} onToggle={() => setIsSidebarCollapsed(!isSidebarCollapsed)} />
-
-          <section
-            className="content"
-            style={{
-              padding: "40px clamp(20px, 5vw, 60px)",
-              background: "rgba(255, 255, 255, 0.4)",
-              backdropFilter: "blur(5px)",
-              minHeight: "100vh"
-            }}
-          >
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={pathname}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.4, ease: "easeOut" }}
-              >
-                {children}
-              </motion.div>
-            </AnimatePresence>
-          </section>
-        </main>
-      </div>
-    </LearningProvider>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={pathname}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.4, ease: "easeOut" }}
+            >
+              {children}
+            </motion.div>
+          </AnimatePresence>
+        </section>
+      </main>
+    </div>
   );
 }
 
@@ -137,6 +136,46 @@ export function NavigationLoader() {
   );
 }
 
+export function ThemeToggler() {
+  const { theme, setTheme } = useLearning();
+  return (
+    <button
+      onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+      type="button"
+      title={`Switch to ${theme === "light" ? "dark" : "light"} theme`}
+      style={{
+        position: "fixed",
+        top: "24px",
+        right: "24px",
+        zIndex: 1000,
+        width: "44px",
+        height: "44px",
+        borderRadius: "50%",
+        border: "1px solid var(--line)",
+        background: "var(--sidebar-bg)",
+        backdropFilter: "blur(20px)",
+        color: "var(--ink)",
+        display: "grid",
+        placeItems: "center",
+        cursor: "pointer",
+        boxShadow: "var(--shadow)",
+        transition: "all 0.2s ease"
+      }}
+      className="theme-toggler"
+      onMouseEnter={(e) => {
+        e.currentTarget.style.transform = "scale(1.1)";
+        e.currentTarget.style.borderColor = "var(--blue)";
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.transform = "scale(1)";
+        e.currentTarget.style.borderColor = "var(--line)";
+      }}
+    >
+      {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
+    </button>
+  );
+}
+
 function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => void }) {
   const pathname = usePathname();
   const { level, setLevel } = useLearning();
@@ -149,15 +188,15 @@ function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => 
         position: "sticky",
         top: 0,
         height: "100vh",
-        background: "rgba(255, 255, 255, 0.6)",
+        background: "var(--sidebar-bg)",
         backdropFilter: "blur(20px)",
-        borderRight: "1px solid rgba(255, 255, 255, 0.3)",
+        borderRight: "1px solid var(--sidebar-border)",
         boxShadow: "10px 0 30px rgba(0,0,0,0.03)",
         display: "flex",
         flexDirection: "column",
         gap: "24px",
         padding: "24px",
-        transition: "width 0.3s ease, padding 0.3s ease",
+        transition: "width 0.3s ease, padding 0.3s ease, background 0.3s ease, border-color 0.3s ease",
         zIndex: 100
       }}
     >
@@ -187,14 +226,13 @@ function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => 
           aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
           style={{
             background: "transparent",
-            border: "none",
             cursor: "pointer",
             display: "grid",
             placeItems: "center",
             width: "32px",
             height: "32px",
             borderRadius: "50%",
-            border: "1px solid rgba(0,0,0,0.1)"
+            border: "1px solid var(--line)"
           }}
         >
           {collapsed ? <Menu size={16} /> : <ChevronLeft size={16} />}
@@ -232,10 +270,10 @@ function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => 
       </nav>
 
       {!collapsed && (
-        <>
-          <div className="level-card" style={{ marginTop: "auto", padding: "16px", background: "rgba(0,0,0,0.03)", borderRadius: "8px" }}>
+        <div style={{ marginTop: "auto", display: "grid", gap: "12px" }}>
+          <div className="level-card" style={{ padding: "16px", border: "1px solid var(--line)", borderRadius: "8px", background: "var(--panel)" }}>
             <span style={{ fontSize: "0.75rem", textTransform: "uppercase", color: "var(--muted)", letterSpacing: "0.05em" }}>Active level</span>
-            <div className="level-switch" style={{ display: "grid", gridAutoFlow: "column", gap: "4px", marginTop: "8px" }}>
+            <div className="level-switch" style={{ display: "grid", gridAutoFlow: "column", gap: "4px", marginTop: "8px", border: "1px solid var(--line)", borderRadius: "8px", padding: "4px", background: "var(--tabs-bg)" }}>
               {(["N5", "N4"] as Level[]).map((item) => (
                 <button
                   className={level === item ? "active" : ""}
@@ -247,7 +285,7 @@ function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => 
                     borderRadius: "6px",
                     border: "none",
                     cursor: "pointer",
-                    background: level === item ? "white" : "transparent",
+                    background: level === item ? "var(--paper)" : "transparent",
                     fontWeight: "bold",
                     color: level === item ? "var(--blue)" : "var(--ink)",
                     boxShadow: level === item ? "0 2px 10px rgba(0,0,0,0.05)" : "none"
@@ -259,28 +297,28 @@ function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => 
             </div>
           </div>
 
-          <div className="sidebar-note" style={{ display: "flex", gap: "8px", alignItems: "center", fontSize: "0.8rem", color: "var(--muted)", marginTop: "12px" }}>
+          <div className="sidebar-note" style={{ display: "flex", gap: "8px", alignItems: "center", fontSize: "0.8rem", color: "var(--muted)" }}>
             <GraduationCap size={16} />
             <span>Progress saved locally.</span>
           </div>
-        </>
+        </div>
       )}
 
       {collapsed && (
-        <div className="sidebar-collapsed-level" title={`Current Level: ${level}`} style={{
-          marginTop: "auto",
-          textAlign: "center",
-          fontWeight: "bold",
-          color: "var(--muted)",
-          border: "1px solid rgba(0,0,0,0.1)",
-          borderRadius: "50%",
-          width: "32px",
-          height: "32px",
-          display: "grid",
-          placeItems: "center",
-          margin: "auto auto 20px"
-        }}>
-          {level}
+        <div style={{ marginTop: "auto", display: "flex", flexDirection: "column", gap: "12px", alignItems: "center", margin: "auto auto 20px" }}>
+          <div className="sidebar-collapsed-level" title={`Current Level: ${level}`} style={{
+            textAlign: "center",
+            fontWeight: "bold",
+            color: "var(--muted)",
+            border: "1px solid var(--line)",
+            borderRadius: "50%",
+            width: "32px",
+            height: "32px",
+            display: "grid",
+            placeItems: "center"
+          }}>
+            {level}
+          </div>
         </div>
       )}
     </aside>
@@ -322,9 +360,9 @@ export function PageHeader({
 export function Metric({ icon, label, value }: { icon: ReactNode; label: string; value: string }) {
   return (
     <article style={{
-      background: "rgba(255, 255, 255, 0.8)",
+      background: "var(--card-glass-bg)",
       backdropFilter: "blur(10px)",
-      border: "1px solid rgba(255, 255, 255, 0.5)",
+      border: "1px solid var(--card-glass-border)",
       borderRadius: "12px",
       padding: "20px",
       display: "grid",

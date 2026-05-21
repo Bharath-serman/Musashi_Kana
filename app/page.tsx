@@ -23,7 +23,7 @@ export default function DashboardPage() {
 }
 
 function Dashboard() {
-  const { data, level, progress, progressPercent, setProgress } = useLearning();
+  const { data, level, progress, progressPercent, setProgress, theme } = useLearning();
 
   function toggleTask(task: string) {
     setProgress((current) => ({
@@ -117,7 +117,7 @@ function Dashboard() {
               href="/flashcards"
               style={{
                 background: "var(--ink)",
-                color: "white",
+                color: "var(--paper)",
                 padding: "14px 28px",
                 borderRadius: "8px",
                 fontWeight: "bold",
@@ -132,13 +132,13 @@ function Dashboard() {
               className="secondary-action" 
               href="/roadmap"
               style={{
-                background: "rgba(255,255,255,0.8)",
+                background: "var(--card-glass-bg)",
                 color: "var(--ink)",
                 padding: "14px 28px",
                 borderRadius: "8px",
                 fontWeight: "bold",
                 textDecoration: "none",
-                border: "1px solid rgba(0,0,0,0.1)",
+                border: "1px solid var(--line)",
                 transition: "background 0.2s"
               }}
             >
@@ -159,13 +159,13 @@ function Dashboard() {
           <div style={{
             borderRadius: "20px",
             overflow: "hidden",
-            boxShadow: "0 30px 60px rgba(0,0,0,0.12)",
-            background: "rgba(255,255,255,0.5)",
+            boxShadow: "var(--shadow)",
+            background: "var(--glass-bg)",
             backdropFilter: "blur(10px)",
             padding: "10px"
           }}>
             <Image 
-              src="/study-scene.png" 
+              src={theme === "dark" ? "/study-scene-dark.png" : "/study-scene.png"} 
               alt="Japanese study desk with flashcards and notebook" 
               width={1200} 
               height={800} 
@@ -188,13 +188,13 @@ function Dashboard() {
               position: "absolute",
               bottom: "30px",
               right: "-20px",
-              background: "rgba(255, 255, 255, 0.9)",
+              background: "var(--card-glass-bg)",
               backdropFilter: "blur(10px)",
               padding: "20px",
               borderRadius: "12px",
               boxShadow: "0 20px 40px rgba(0,0,0,0.15)",
               maxWidth: "280px",
-              border: "1px solid rgba(255,255,255,0.5)"
+              border: "1px solid var(--card-glass-border)"
             }}
           >
             <span style={{ fontSize: "0.75rem", textTransform: "uppercase", color: "var(--blue)", fontWeight: "bold" }}>Smart session</span>
@@ -236,11 +236,11 @@ function Dashboard() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 1 }}
           style={{
-            background: "rgba(255, 255, 255, 0.7)",
+            background: "var(--card-glass-bg)",
             backdropFilter: "blur(10px)",
             borderRadius: "16px",
             padding: "30px",
-            border: "1px solid rgba(255,255,255,0.5)"
+            border: "1px solid var(--card-glass-border)"
           }}
         >
           <div className="section-heading" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
@@ -269,7 +269,7 @@ function Dashboard() {
               width: "120px", 
               height: "120px", 
               borderRadius: "50%", 
-              border: "10px solid #eee", 
+              border: "10px solid var(--line)", 
               display: "grid", 
               placeItems: "center"
             }}>
@@ -292,8 +292,8 @@ function Dashboard() {
                     gap: "10px",
                     padding: "12px",
                     borderRadius: "8px",
-                    border: "1px solid rgba(0,0,0,0.05)",
-                    background: isDone ? "rgba(19, 128, 95, 0.1)" : "white",
+                    border: "1px solid var(--line)",
+                    background: isDone ? "var(--success-soft)" : "var(--paper)",
                     color: isDone ? "var(--green)" : "var(--ink)",
                     cursor: "pointer",
                     textAlign: "left",
@@ -324,11 +324,11 @@ function Dashboard() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 1.2 }}
           style={{
-            background: "rgba(255, 255, 255, 0.7)",
+            background: "var(--card-glass-bg)",
             backdropFilter: "blur(10px)",
             borderRadius: "16px",
             padding: "30px",
-            border: "1px solid rgba(255,255,255,0.5)"
+            border: "1px solid var(--card-glass-border)"
           }}
         >
           <div className="section-heading" style={{ marginBottom: "20px" }}>
@@ -355,12 +355,12 @@ function Dashboard() {
                 key={route.href}
                 href={route.href}
                 style={{
-                  background: "white",
+                  background: "var(--paper)",
                   padding: "20px",
                   borderRadius: "12px",
                   textDecoration: "none",
                   color: "var(--ink)",
-                  border: "1px solid rgba(0,0,0,0.05)",
+                  border: "1px solid var(--line)",
                   transition: "transform 0.2s, box-shadow 0.2s",
                   display: "grid",
                   gap: "4px"
