@@ -27,25 +27,39 @@ type LearningState = {
   progress: Progress;
   setProgress: Dispatch<SetStateAction<Progress>>;
   progressPercent: number;
+  theme: "light" | "dark";
+  setTheme: (theme: "light" | "dark") => void;
 };
 
 const LearningContext = createContext<LearningState | null>(null);
 const progressKey = "musashi-kana-progress";
 const levelKey = "musashi-kana-level";
+const themeKey = "musashi-kana-theme";
 const legacyProgressKey = "minato-progress";
 const legacyLevelKey = "minato-level";
 
 export function LearningProvider({ children }: { children: ReactNode }) {
   const [level, setLevel] = useState<Level>("N5");
   const [progress, setProgress] = useState<Progress>(defaultProgress);
+  const [theme, setTheme] = useState<"light" | "dark">("light");
 
+  // Load persistence on mount
   useEffect(() => {
     const saved = window.localStorage.getItem(progressKey) ?? window.localStorage.getItem(legacyProgressKey);
     const savedLevel = (window.localStorage.getItem(levelKey) ?? window.localStorage.getItem(legacyLevelKey)) as Level | null;
+    const savedTheme = window.localStorage.getItem(themeKey) as "light" | "dark" | null;
+    
     if (saved) setProgress({ ...defaultProgress, ...JSON.parse(saved) });
     if (savedLevel === "N5" || savedLevel === "N4") setLevel(savedLevel);
+    
+    if (savedTheme === "light" || savedTheme === "dark") {
+      setTheme(savedTheme);
+    } else if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
+      setTheme("dark");
+    }
   }, []);
 
+  // Sync state to local storage and document element
   useEffect(() => {
     window.localStorage.setItem(progressKey, JSON.stringify(progress));
   }, [progress]);
@@ -53,6 +67,12 @@ export function LearningProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     window.localStorage.setItem(levelKey, level);
   }, [level]);
+
+  useEffect(() => {
+    window.localStorage.setItem(themeKey, theme);
+    const root = window.document.documentElement;
+    root.setAttribute("data-theme", theme);
+  }, [theme]);
 
   const value = useMemo<LearningState>(() => {
     const progressPercent = Math.min(
@@ -66,9 +86,11 @@ export function LearningProvider({ children }: { children: ReactNode }) {
       data: course[level],
       progress,
       setProgress,
-      progressPercent
+      progressPercent,
+      theme,
+      setTheme
     };
-  }, [level, progress]);
+  }, [level, progress, theme]);
 
   return <LearningContext.Provider value={value}>{children}</LearningContext.Provider>;
 }
