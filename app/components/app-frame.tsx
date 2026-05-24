@@ -188,7 +188,7 @@ function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => 
         position: "sticky",
         top: 0,
         height: "100vh",
-        background: "var(--sidebar-bg)",
+        background: "var(--sidebar-glass)",
         backdropFilter: "blur(20px)",
         borderRight: "1px solid var(--sidebar-border)",
         boxShadow: "10px 0 30px rgba(0,0,0,0.03)",
@@ -205,12 +205,13 @@ function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => 
           <div className="brand-mark" style={{
             width: "40px",
             height: "40px",
-            background: "var(--ink)",
+            background: "var(--blue-dark)",
             color: "white",
             display: "grid",
             placeItems: "center",
             borderRadius: "8px",
-            fontWeight: "bold"
+            fontWeight: "bold",
+            fontSize: "1.3rem"
           }}>学</div>
           {!collapsed && (
             <div style={{ marginLeft: "12px" }}>
@@ -225,7 +226,7 @@ function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => 
           type="button"
           aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
           style={{
-            background: "transparent",
+            background: "var(--sidebar-toggle-bg)",
             cursor: "pointer",
             display: "grid",
             placeItems: "center",
@@ -256,8 +257,8 @@ function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => 
                 padding: "12px",
                 borderRadius: "8px",
                 textDecoration: "none",
-                color: active ? "white" : "var(--ink)",
-                background: active ? "var(--ink)" : "transparent",
+                color: active ? "var(--sidebar-active-color)" : "var(--ink)",
+                background: active ? "var(--sidebar-active-bg)" : "transparent",
                 transition: "background 0.2s, color 0.2s",
                 fontWeight: active ? "700" : "500"
               }}
