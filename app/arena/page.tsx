@@ -26,12 +26,25 @@ function Arena() {
   const [lastSelectedWrongId, setLastSelectedWrongId] = useState<string | null>(null);
   const [isError, setIsError] = useState(false);
   const [highScore, setHighScore] = useState(0);
+  const [starredItems, setStarredItems] = useState<string[]>([]);
 
-  // Load High Score
+  // Load High Score & Starred Items
   useEffect(() => {
     const saved = localStorage.getItem(`arena-high-score-${level}`);
     if (saved) setHighScore(parseInt(saved, 10));
+
+    const savedStars = localStorage.getItem("arena-starred-kana");
+    if (savedStars) setStarredItems(JSON.parse(savedStars));
   }, [level]);
+
+  function toggleStar(kana: string) {
+    if (!kana) return;
+    setStarredItems(prev => {
+      const next = prev.includes(kana) ? prev.filter(x => x !== kana) : [...prev, kana];
+      localStorage.setItem("arena-starred-kana", JSON.stringify(next));
+      return next;
+    });
+  }
 
   // Timer logic
   useEffect(() => {
@@ -59,6 +72,7 @@ function Arena() {
   }, [level]);
 
   const currentQuestion = questions[currentIndex % questions.length];
+  const isStarred = currentQuestion ? starredItems.includes(currentQuestion.kana) : false;
   
   const options = useMemo(() => {
     if (!currentQuestion) return [];
@@ -190,11 +204,18 @@ function Arena() {
 
       <div className="arena-game-card">
         <div className="card-header">
-          <button className="icon-btn" onClick={() => playAudio(currentQuestion?.kana)} aria-label="Play audio">
+          <button className="icon-button" onClick={() => playAudio(currentQuestion?.kana)} aria-label="Play audio">
             <Volume2 size={20} />
           </button>
           <div className="card-indicator"><AlertCircle size={16} /></div>
-          <button className="icon-btn"><Star size={20} /></button>
+          <button 
+            className="icon-button" 
+            onClick={() => toggleStar(currentQuestion?.kana)} 
+            aria-label={isStarred ? "Unstar character" : "Star character"}
+            style={{ color: isStarred ? "var(--blue)" : "inherit" }}
+          >
+            <Star size={20} fill={isStarred ? "var(--blue)" : "none"} />
+          </button>
         </div>
         
         <div className="card-prompt">
