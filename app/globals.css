@@ -1787,13 +1787,12 @@ canvas {
 }
 /* Arena Game Styles - Light Theme */
 .arena-container {
-  max-width: 600px;
+  max-width: 420px;
   margin: 0 auto;
-  padding: 32px 24px;
+  padding: 4px 16px;
   display: flex;
   flex-direction: column;
-  gap: 28px;
-  min-height: calc(100vh - 120px);
+  gap: 12px;
 }
 
 .arena-header {
@@ -1801,7 +1800,7 @@ canvas {
   justify-content: space-between;
   align-items: center;
   background: var(--card-glass-bg);
-  padding: 16px 24px;
+  padding: 12px 20px;
   border-radius: 16px;
   border: 1px solid var(--line);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
@@ -1833,7 +1832,7 @@ canvas {
 
 .arena-stats-mini {
   display: flex;
-  gap: 32px;
+  gap: 24px;
 }
 
 .stat-item {
@@ -1875,8 +1874,28 @@ canvas {
   color: var(--muted);
 }
 
+.card-header .icon-button {
+  width: 40px;
+  height: 40px;
+  min-height: 40px;
+  border-radius: 10px;
+  background: var(--card-glass-bg);
+  border: 1px solid var(--line);
+  color: var(--muted);
+  display: grid;
+  place-items: center;
+  transition: all 0.2s ease;
+}
+
+.card-header .icon-button:hover {
+  background: var(--card-glass-bg-hover);
+  color: var(--ink);
+  border-color: var(--muted);
+  transform: translateY(-1px);
+}
+
 .card-prompt {
-  padding: 32px;
+  padding: 24px;
   text-align: center;
 }
 
@@ -1891,15 +1910,15 @@ canvas {
   margin-top: auto;
   display: flex;
   justify-content: center;
-  gap: 16px;
-  padding: 16px;
+  gap: 12px;
+  padding: 8px 12px;
 }
 
 .footer-btn {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 12px 20px;
+  gap: 6px;
+  padding: 10px 16px;
   background: var(--paper);
   border: 1px solid var(--line);
   border-radius: 12px;
@@ -1943,11 +1962,11 @@ canvas {
 }
 
 .arena-option {
-  aspect-ratio: 1.1;
+  aspect-ratio: 1;
   background: var(--paper);
   border: none;
   color: var(--ink);
-  font-size: 2rem;
+  font-size: 1.75rem;
   font-weight: 800;
   cursor: pointer;
   transition: all 150ms ease;
@@ -1979,7 +1998,7 @@ canvas {
 .arena-landing-content,
 .results-card {
   background: var(--card-glass-bg);
-  padding: 48px;
+  padding: 28px 40px;
   border-radius: 24px;
   border: 1px solid var(--line);
   text-align: center;
@@ -2012,7 +2031,7 @@ canvas {
 .start-game-btn {
   width: 100%;
   background: var(--ink);
-  color: white;
+  color: var(--paper);
   padding: 16px;
   border-radius: 12px;
   font-weight: 900;

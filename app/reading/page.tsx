@@ -86,7 +86,7 @@ function Reading() {
             className="cinematic-button"
             style={{
               background: "var(--ink)",
-              color: "white",
+              color: "var(--paper)",
               padding: "0 20px",
               borderRadius: "999px",
               fontWeight: "bold",
@@ -146,7 +146,8 @@ function PassageCard({ passage, isExpanded, onToggle, showTranslation }: {
         overflow: "hidden",
         border: "1px solid var(--line)",
         borderRadius: "12px",
-        background: "rgba(255, 255, 255, 0.9)",
+        background: "var(--card-glass-bg)",
+        backdropFilter: "blur(10px)",
         boxShadow: "0 10px 30px rgba(0,0,0,0.05)",
         padding: "24px"
       }}

@@ -34,8 +34,8 @@ export default function ReferencePage() {
               borderRadius: "999px",
               border: "none",
               cursor: "pointer",
-              background: activeTab === tab ? "var(--ink)" : "rgba(255,255,255,0.8)",
-              color: activeTab === tab ? "white" : "var(--ink)",
+              background: activeTab === tab ? "var(--ink)" : "var(--card-glass-bg)",
+              color: activeTab === tab ? "var(--paper)" : "var(--ink)",
               fontWeight: "bold",
               boxShadow: activeTab === tab ? "0 4px 15px rgba(0,0,0,0.1)" : "none",
               transition: "all 0.3s ease"
@@ -55,7 +55,7 @@ export default function ReferencePage() {
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.3 }}
             className="panel"
-            style={{ background: "rgba(255,255,255,0.7)", backdropFilter: "blur(10px)", padding: "30px", borderRadius: "16px", border: "1px solid rgba(255,255,255,0.5)" }}
+            style={{ background: "var(--card-glass-bg)", backdropFilter: "blur(10px)", padding: "30px", borderRadius: "16px", border: "1px solid var(--line)" }}
           >
             <h2 style={{ marginBottom: "20px", fontWeight: "900" }}>Hiragana Chart</h2>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "12px" }}>
@@ -63,11 +63,11 @@ export default function ReferencePage() {
                 <motion.div
                   key={index}
                   style={{
-                    background: item.kana ? "white" : "transparent",
+                    background: item.kana ? "var(--paper)" : "transparent",
                     padding: "15px",
                     borderRadius: "12px",
                     textAlign: "center",
-                    border: item.kana ? "1px solid rgba(0,0,0,0.05)" : "none",
+                    border: item.kana ? "1px solid var(--line)" : "none",
                     boxShadow: item.kana ? "0 2px 5px rgba(0,0,0,0.02)" : "none",
                     cursor: item.kana ? "pointer" : "default"
                   }}
@@ -90,7 +90,7 @@ export default function ReferencePage() {
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.3 }}
             className="panel"
-            style={{ background: "rgba(255,255,255,0.7)", backdropFilter: "blur(10px)", padding: "30px", borderRadius: "16px", border: "1px solid rgba(255,255,255,0.5)" }}
+            style={{ background: "var(--card-glass-bg)", backdropFilter: "blur(10px)", padding: "30px", borderRadius: "16px", border: "1px solid var(--line)" }}
           >
             <h2 style={{ marginBottom: "20px", fontWeight: "900" }}>Katakana Chart</h2>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "12px" }}>
@@ -98,11 +98,11 @@ export default function ReferencePage() {
                 <motion.div
                   key={index}
                   style={{
-                    background: item.kana ? "white" : "transparent",
+                    background: item.kana ? "var(--paper)" : "transparent",
                     padding: "15px",
                     borderRadius: "12px",
                     textAlign: "center",
-                    border: item.kana ? "1px solid rgba(0,0,0,0.05)" : "none",
+                    border: item.kana ? "1px solid var(--line)" : "none",
                     boxShadow: item.kana ? "0 2px 5px rgba(0,0,0,0.02)" : "none",
                     cursor: item.kana ? "pointer" : "default"
                   }}
@@ -125,7 +125,7 @@ export default function ReferencePage() {
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.3 }}
             className="panel"
-            style={{ background: "rgba(255,255,255,0.7)", backdropFilter: "blur(10px)", padding: "30px", borderRadius: "16px", border: "1px solid rgba(255,255,255,0.5)" }}
+            style={{ background: "var(--card-glass-bg)", backdropFilter: "blur(10px)", padding: "30px", borderRadius: "16px", border: "1px solid var(--line)" }}
           >
             <h2 style={{ marginBottom: "15px", fontWeight: "900" }}>N5 Kanji</h2>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(100px, 1fr))", gap: "12px", marginBottom: "40px" }}>
@@ -133,11 +133,11 @@ export default function ReferencePage() {
                 <motion.div
                   key={index}
                   style={{
-                    background: "white",
+                    background: "var(--paper)",
                     padding: "15px",
                     borderRadius: "12px",
                     textAlign: "center",
-                    border: "1px solid rgba(0,0,0,0.05)",
+                    border: "1px solid var(--line)",
                     cursor: "pointer"
                   }}
                   whileHover={{ scale: 1.05, boxShadow: "0 10px 20px rgba(0,0,0,0.05)", borderColor: "var(--blue)" }}
@@ -156,11 +156,11 @@ export default function ReferencePage() {
                 <motion.div
                   key={index}
                   style={{
-                    background: "white",
+                    background: "var(--paper)",
                     padding: "15px",
                     borderRadius: "12px",
                     textAlign: "center",
-                    border: "1px solid rgba(0,0,0,0.05)",
+                    border: "1px solid var(--line)",
                     cursor: "pointer"
                   }}
                   whileHover={{ scale: 1.05, boxShadow: "0 10px 20px rgba(0,0,0,0.05)", borderColor: "var(--blue)" }}
