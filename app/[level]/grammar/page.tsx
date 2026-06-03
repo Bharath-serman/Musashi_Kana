@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { AppFrame, PageHeader } from "../components/app-frame";
-import { useLearning } from "../components/learning-state";
-import { supabase } from "../lib/supabase";
+import { AppFrame, PageHeader } from "../../components/app-frame";
+import { useLearning } from "../../components/learning-state";
+import { supabase } from "../../lib/supabase";
 import { slugifyGrammar } from "./grammar-content";
 
 export default function GrammarPage() {

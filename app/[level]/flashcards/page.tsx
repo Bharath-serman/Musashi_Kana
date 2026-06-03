@@ -2,9 +2,9 @@
 
 import { useEffect, useState, useRef } from "react";
 import { Check, ChevronLeft, ChevronRight } from "lucide-react";
-import { AppFrame, PageHeader } from "../components/app-frame";
-import { useLearning } from "../components/learning-state";
-import { supabase } from "../lib/supabase";
+import { AppFrame, PageHeader } from "../../components/app-frame";
+import { useLearning } from "../../components/learning-state";
+import { supabase } from "../../lib/supabase";
 
 export default function FlashcardsPage() {
   return (

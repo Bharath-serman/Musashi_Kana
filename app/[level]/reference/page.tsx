@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { AppFrame, PageHeader } from "../components/app-frame";
+import { AppFrame, PageHeader } from "../../components/app-frame";
 import { motion, AnimatePresence } from "framer-motion";
 import { hiragana, katakana, n5Kanji, n4Kanji } from "./data";
 

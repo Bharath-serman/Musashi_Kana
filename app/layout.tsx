@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { LearningProvider } from "./components/learning-state";
+import { AuthProvider } from "./components/auth-provider";
 
 export const metadata: Metadata = {
   title: "Musashi_Kana JLPT Studio",
@@ -14,9 +15,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <LearningProvider>
-          {children}
-        </LearningProvider>
+        <AuthProvider>
+          <LearningProvider>
+            {children}
+          </LearningProvider>
+        </AuthProvider>
       </body>
     </html>
   );

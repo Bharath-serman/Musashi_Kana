@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import type { Dispatch, ReactNode, SetStateAction } from "react";
+import { useParams } from "next/navigation";
 import { Level, course } from "../data";
 
 export type Progress = {
@@ -33,24 +34,23 @@ type LearningState = {
 
 const LearningContext = createContext<LearningState | null>(null);
 const progressKey = "musashi-kana-progress";
-const levelKey = "musashi-kana-level";
 const themeKey = "musashi-kana-theme";
 const legacyProgressKey = "minato-progress";
-const legacyLevelKey = "minato-level";
 
 export function LearningProvider({ children }: { children: ReactNode }) {
-  const [level, setLevel] = useState<Level>("N5");
+  const params = useParams();
+  const levelParam = typeof params?.level === 'string' ? params.level.toLowerCase() : '';
+  const level: Level = levelParam === 'n4' ? 'N4' : 'N5';
+
   const [progress, setProgress] = useState<Progress>(defaultProgress);
   const [theme, setTheme] = useState<"light" | "dark">("light");
 
   // Load persistence on mount
   useEffect(() => {
     const saved = window.localStorage.getItem(progressKey) ?? window.localStorage.getItem(legacyProgressKey);
-    const savedLevel = (window.localStorage.getItem(levelKey) ?? window.localStorage.getItem(legacyLevelKey)) as Level | null;
     const savedTheme = window.localStorage.getItem(themeKey) as "light" | "dark" | null;
     
     if (saved) setProgress({ ...defaultProgress, ...JSON.parse(saved) });
-    if (savedLevel === "N5" || savedLevel === "N4") setLevel(savedLevel);
     
     if (savedTheme === "light" || savedTheme === "dark") {
       setTheme(savedTheme);
@@ -64,9 +64,8 @@ export function LearningProvider({ children }: { children: ReactNode }) {
     window.localStorage.setItem(progressKey, JSON.stringify(progress));
   }, [progress]);
 
-  useEffect(() => {
-    window.localStorage.setItem(levelKey, level);
-  }, [level]);
+  // no-op for setLevel since it's driven by URL now
+  const setLevel = () => {};
 
   useEffect(() => {
     window.localStorage.setItem(themeKey, theme);

@@ -1,9 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { AppFrame, PageHeader } from "../components/app-frame";
-import { useLearning } from "../components/learning-state";
-import { course } from "../data";
+import { AppFrame, PageHeader } from "../../components/app-frame";
+import { useLearning } from "../../components/learning-state";
+import { course } from "../../data";
 
 type KanaSection = {
   title: string;

@@ -2,10 +2,10 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Trophy } from "lucide-react";
-import { AppFrame, PageHeader } from "../components/app-frame";
-import { useLearning } from "../components/learning-state";
-import { supabase } from "../lib/supabase";
-import type { QuizQuestion } from "../data";
+import { AppFrame, PageHeader } from "../../components/app-frame";
+import { useLearning } from "../../components/learning-state";
+import { supabase } from "../../lib/supabase";
+import type { QuizQuestion } from "../../data";
 
 export default function QuizPage() {
   return (

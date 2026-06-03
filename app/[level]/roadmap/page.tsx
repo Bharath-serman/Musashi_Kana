@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { AppFrame, PageHeader } from "../components/app-frame";
-import { useLearning } from "../components/learning-state";
+import { AppFrame, PageHeader } from "../../components/app-frame";
+import { useLearning } from "../../components/learning-state";
 
 const resources = [
   ["Kana sprint", "Read kana aloud for five minutes, then write the symbols you missed."],
