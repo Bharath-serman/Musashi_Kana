@@ -1,5 +1,5 @@
-import { course } from "../data";
-import type { Grammar, Level } from "../data";
+import { course } from "../../data";
+import type { Grammar, Level } from "../../data";
 
 export type LessonChart = {
   headers: string[];

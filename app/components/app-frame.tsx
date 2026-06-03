@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import type { MouseEvent, ReactNode } from "react";
-import { BookOpen, Brain, ChevronLeft, ClipboardList, GraduationCap, Languages, Layers, Map, Menu, PenLine, Target, Sun, Moon } from "lucide-react";
+import { BookOpen, Brain, ChevronLeft, ClipboardList, GraduationCap, Languages, Layers, Map, Menu, PenLine, Target, Sun, Moon, User } from "lucide-react";
 import { Level } from "../data";
 import { LearningProvider, useLearning } from "./learning-state";
 import CinematicBackground from "./cinematic-background";
@@ -20,7 +20,8 @@ const navItems = [
   { href: "/writing", label: "Writing", icon: PenLine },
   { href: "/arena", label: "Arena", icon: Target },
   { href: "/quiz", label: "Quiz", icon: Brain },
-  { href: "/reference", label: "Charts", icon: ClipboardList }
+  { href: "/reference", label: "Charts", icon: ClipboardList },
+  { href: "/profile", label: "Profile", icon: User }
 ];
 
 export function AppFrame({ children }: { children: ReactNode }) {
@@ -82,7 +83,6 @@ export function AppFrame({ children }: { children: ReactNode }) {
   return (
     <div style={{ position: "relative", minHeight: "100vh" }}>
       <CinematicBackground />
-      <ThemeToggler />
 
       <main
         className={`app-shell ${isSidebarCollapsed ? "sidebar-collapsed" : ""}`}
@@ -133,46 +133,6 @@ export function NavigationLoader() {
         Loading
       </div>
     </div>
-  );
-}
-
-export function ThemeToggler() {
-  const { theme, setTheme } = useLearning();
-  return (
-    <button
-      onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-      type="button"
-      title={`Switch to ${theme === "light" ? "dark" : "light"} theme`}
-      style={{
-        position: "fixed",
-        top: "24px",
-        right: "24px",
-        zIndex: 1000,
-        width: "44px",
-        height: "44px",
-        borderRadius: "50%",
-        border: "1px solid var(--line)",
-        background: "var(--sidebar-bg)",
-        backdropFilter: "blur(20px)",
-        color: "var(--ink)",
-        display: "grid",
-        placeItems: "center",
-        cursor: "pointer",
-        boxShadow: "var(--shadow)",
-        transition: "all 0.2s ease"
-      }}
-      className="theme-toggler"
-      onMouseEnter={(e) => {
-        e.currentTarget.style.transform = "scale(1.1)";
-        e.currentTarget.style.borderColor = "var(--blue)";
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.transform = "scale(1)";
-        e.currentTarget.style.borderColor = "var(--line)";
-      }}
-    >
-      {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
-    </button>
   );
 }
 
@@ -243,11 +203,12 @@ function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => 
       <nav style={{ display: "grid", gap: "8px" }}>
         {navItems.map((item) => {
           const Icon = item.icon;
-          const active = pathname === item.href;
+          const href = item.href === "/" ? `/${level.toLowerCase()}` : `/${level.toLowerCase()}${item.href}`;
+          const active = pathname === href;
           return (
             <Link
               className={`${active ? "active" : ""} ${collapsed ? "collapsed-link" : ""}`}
-              href={item.href}
+              href={href}
               key={item.href}
               title={collapsed ? item.label : ""}
               style={{
@@ -273,29 +234,31 @@ function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => 
       {!collapsed && (
         <div style={{ marginTop: "auto", display: "grid", gap: "12px" }}>
           <div className="level-card" style={{ padding: "16px", border: "1px solid var(--line)", borderRadius: "8px", background: "var(--panel)" }}>
-            <span style={{ fontSize: "0.75rem", textTransform: "uppercase", color: "var(--muted)", letterSpacing: "0.05em" }}>Active level</span>
-            <div className="level-switch" style={{ display: "grid", gridAutoFlow: "column", gap: "4px", marginTop: "8px", border: "1px solid var(--line)", borderRadius: "8px", padding: "4px", background: "var(--tabs-bg)" }}>
-              {(["N5", "N4"] as Level[]).map((item) => (
-                <button
-                  className={level === item ? "active" : ""}
-                  key={item}
-                  onClick={() => setLevel(item)}
-                  type="button"
-                  style={{
-                    padding: "8px",
-                    borderRadius: "6px",
-                    border: "none",
-                    cursor: "pointer",
-                    background: level === item ? "var(--paper)" : "transparent",
-                    fontWeight: "bold",
-                    color: level === item ? "var(--blue)" : "var(--ink)",
-                    boxShadow: level === item ? "0 2px 10px rgba(0,0,0,0.05)" : "none"
-                  }}
-                >
-                  {item}
-                </button>
-              ))}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <span style={{ fontSize: "0.75rem", textTransform: "uppercase", color: "var(--muted)", letterSpacing: "0.05em" }}>Active Path</span>
+              <strong style={{ color: "var(--blue)", fontSize: "1.1rem" }}>{level}</strong>
             </div>
+            <Link 
+              href="/select"
+              style={{
+                display: "block",
+                textAlign: "center",
+                marginTop: "12px",
+                padding: "8px",
+                borderRadius: "6px",
+                border: "1px solid var(--line)",
+                background: "var(--paper)",
+                color: "var(--ink)",
+                textDecoration: "none",
+                fontWeight: "bold",
+                fontSize: "0.9rem",
+                transition: "all 0.2s ease"
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.borderColor = "var(--blue)"}
+              onMouseLeave={(e) => e.currentTarget.style.borderColor = "var(--line)"}
+            >
+              Switch Path
+            </Link>
           </div>
 
           <div className="sidebar-note" style={{ display: "flex", gap: "8px", alignItems: "center", fontSize: "0.8rem", color: "var(--muted)" }}>

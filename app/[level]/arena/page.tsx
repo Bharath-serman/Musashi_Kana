@@ -2,8 +2,8 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { AlertCircle, ChevronRight, Home, Search, Star, Target, Volume2 } from "lucide-react";
-import { AppFrame } from "../components/app-frame";
-import { useLearning } from "../components/learning-state";
+import { AppFrame } from "../../components/app-frame";
+import { useLearning } from "../../components/learning-state";
 import Link from "next/link";
 
 export default function ArenaPage() {

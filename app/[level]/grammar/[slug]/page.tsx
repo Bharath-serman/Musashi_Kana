@@ -4,11 +4,11 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { ChevronLeft } from "lucide-react";
-import { AppFrame, PageHeader } from "../../components/app-frame";
-import { useLearning } from "../../components/learning-state";
-import { supabase } from "../../lib/supabase";
+import { AppFrame, PageHeader } from "../../../components/app-frame";
+import { useLearning } from "../../../components/learning-state";
+import { supabase } from "../../../lib/supabase";
 import { slugifyGrammar } from "../grammar-content";
-import { course, Level } from "../../data";
+import { course, Level } from "../../../data";
 
 export default function GrammarTopicPage() {
   return (
