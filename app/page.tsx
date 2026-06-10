@@ -108,7 +108,7 @@ export default function LoginPage() {
             Musashi_Kana
           </h1>
           <p style={{ color: "#666", fontSize: "0.95rem" }}>
-            The premium JLPT N5 & N4 learning experience
+             JLPT N5 & N4 learning experience
           </p>
         </div>
 
