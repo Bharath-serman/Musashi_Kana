@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
+
 import { useState, useEffect } from "react";
 import { ChevronLeft } from "lucide-react";
 import { AppFrame, PageHeader } from "../../../components/app-frame";
-import { useLearning } from "../../../components/learning-state";
+
 import { supabase } from "../../../lib/supabase";
 import { slugifyGrammar } from "../grammar-content";
 import { course, Level } from "../../../data";
@@ -19,7 +20,9 @@ export default function GrammarTopicPage() {
 }
 
 function GrammarTopicDetail() {
-  const { slug } = useParams<{ slug: string }>();
+  const params = useParams<{ slug: string; level: string }>();
+  const slug = params.slug;
+  const level = params.level;
   const [lesson, setLesson] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -58,7 +61,7 @@ function GrammarTopicDetail() {
         eyebrow="Patterns"
         title="Lesson not found"
         text="That grammar topic is not available."
-        action={<Link className="secondary-action" href="/grammar">Back to topics</Link>}
+        action={<Link className="secondary-action" href={`/${level}/grammar`}>Back to topics</Link>}
       />
     );
   }
@@ -71,7 +74,7 @@ function GrammarTopicDetail() {
         eyebrow="Patterns"
         title={lesson.topic}
         text={lesson.brief}
-        action={<Link className="secondary-action" href="/grammar"><ChevronLeft size={18} /> Back</Link>}
+        action={<Link className="secondary-action" href={`/${level}/grammar`}><ChevronLeft size={18} /> Back</Link>}
       />
 
       <section className="grammar-detail-layout panel">
