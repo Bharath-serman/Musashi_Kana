@@ -67,7 +67,7 @@ function GrammarIndex() {
       {!loading && !error && topics.length > 0 && (
         <section className="grammar-index-grid">
           {topics.map((topic) => (
-            <Link className="grammar-topic-link" href={`/grammar/${topic.slug}`} key={topic.slug}>
+            <Link className="grammar-topic-link" href={`/${level.toLowerCase()}/grammar/${topic.slug}`} key={topic.slug}>
               <strong>{topic.topic}</strong>
               <span>{topic.pattern}</span>
             </Link>
