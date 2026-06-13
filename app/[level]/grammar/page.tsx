@@ -16,7 +16,7 @@ export default function GrammarPage() {
 }
 
 function GrammarIndex() {
-  const { level } = useLearning();
+  const { level, setProgress } = useLearning();
   const [topics, setTopics] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -67,7 +67,20 @@ function GrammarIndex() {
       {!loading && !error && topics.length > 0 && (
         <section className="grammar-index-grid">
           {topics.map((topic) => (
-            <Link className="grammar-topic-link" href={`/${level.toLowerCase()}/grammar/${topic.slug}`} key={topic.slug}>
+            <Link 
+              className="grammar-topic-link" 
+              href={`/${level.toLowerCase()}/grammar/${topic.slug}`} 
+              key={topic.slug}
+              onClick={() => {
+                setProgress((current) => ({
+                  ...current,
+                  dailyActions: {
+                    ...current.dailyActions,
+                    grammarLessons: current.dailyActions.grammarLessons + 1
+                  }
+                }));
+              }}
+            >
               <strong>{topic.topic}</strong>
               <span>{topic.pattern}</span>
             </Link>

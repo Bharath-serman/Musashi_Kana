@@ -1,15 +1,16 @@
 "use client";
 
 import { useState, useRef } from "react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
-import { updateProfile } from "firebase/auth";
+import { updateProfile, deleteUser, reauthenticateWithCredential, EmailAuthProvider } from "firebase/auth";
 import { useAuth } from "../../components/auth-provider";
 import { AppFrame, PageHeader } from "../../components/app-frame";
 import { useLearning } from "../../components/learning-state";
 import { supabase } from "../../lib/supabase";
 import { auth } from "../../lib/firebase";
-import { Sun, Moon, Camera, Save, LogOut, User as UserIcon } from "lucide-react";
-import { motion } from "framer-motion";
+import { Sun, Moon, Camera, Save, LogOut, Trash2, User as UserIcon, AlertTriangle, X } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function ProfilePage() {
   return (
@@ -29,6 +30,11 @@ function ProfileDashboard() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState({ text: "", type: "" });
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteEmail, setDeleteEmail] = useState("");
+  const [deletePassword, setDeletePassword] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
   
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -83,6 +89,33 @@ function ProfileDashboard() {
       setMessage({ text: error.message, type: "error" });
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleDeleteAccount = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user || !user.email) return;
+
+    setIsDeleting(true);
+    setDeleteError("");
+
+    try {
+      const credential = EmailAuthProvider.credential(deleteEmail, deletePassword);
+      await reauthenticateWithCredential(user, credential);
+      await deleteUser(user);
+      
+      localStorage.clear();
+      router.push("/");
+    } catch (error: any) {
+      if (error.code === "auth/wrong-password" || error.code === "auth/invalid-credential") {
+        setDeleteError("Incorrect password. Please try again.");
+      } else if (error.code === "auth/email-does-not-match") {
+        setDeleteError("Email does not match your account.");
+      } else {
+        setDeleteError(error.message || "Failed to delete account. Please try again.");
+      }
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -246,16 +279,209 @@ function ProfileDashboard() {
               style={{
                 display: "flex", alignItems: "center", justifyContent: "center", gap: "8px",
                 width: "100%", padding: "14px", borderRadius: "8px", border: "1px solid var(--line)",
-                background: "var(--paper)", color: "var(--error)", fontWeight: "bold", cursor: "pointer",
+                background: "var(--paper)", color: "var(--muted)", fontWeight: "bold", cursor: "pointer",
                 transition: "all 0.2s"
               }}
-              onMouseEnter={(e) => { e.currentTarget.style.background = "var(--error-soft)"; e.currentTarget.style.borderColor = "var(--error)"; }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = "var(--paper)"; e.currentTarget.style.borderColor = "var(--line)"; }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = "var(--error-soft)"; e.currentTarget.style.borderColor = "var(--error)"; e.currentTarget.style.color = "var(--error)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = "var(--paper)"; e.currentTarget.style.borderColor = "var(--line)"; e.currentTarget.style.color = "var(--muted)"; }}
             >
               <LogOut size={18} /> Sign out
             </button>
+
+            <button
+              onClick={() => {
+                setDeleteEmail(user?.email || "");
+                setDeletePassword("");
+                setDeleteError("");
+                setShowDeleteModal(true);
+              }}
+              style={{
+                display: "flex", alignItems: "center", justifyContent: "center", gap: "8px",
+                width: "100%", padding: "14px", borderRadius: "8px", border: "1px solid var(--line)",
+                background: "var(--paper)", color: "var(--muted)", fontWeight: "bold", cursor: "pointer",
+                transition: "all 0.2s"
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = "var(--error-soft)"; e.currentTarget.style.borderColor = "var(--error)"; e.currentTarget.style.color = "var(--error)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = "var(--paper)"; e.currentTarget.style.borderColor = "var(--line)"; e.currentTarget.style.color = "var(--muted)"; }}
+            >
+              <Trash2 size={18} /> Delete Account
+            </button>
           </form>
         </motion.article>
+
+        {typeof window !== "undefined" && createPortal(
+          <AnimatePresence>
+            {showDeleteModal && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                style={{
+                  position: "fixed",
+                  inset: 0,
+                  zIndex: 9999,
+                  display: "grid",
+                  placeItems: "center",
+                  background: "rgba(0, 0, 0, 0.6)",
+                  backdropFilter: "blur(8px)",
+                  padding: "20px"
+                }}
+                onClick={() => setShowDeleteModal(false)}
+              >
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                  onClick={(e) => e.stopPropagation()}
+                  style={{
+                    background: "var(--card-glass-bg)",
+                    backdropFilter: "blur(20px)",
+                    borderRadius: "20px",
+                    border: "1px solid var(--card-glass-border)",
+                    padding: "32px",
+                    maxWidth: "440px",
+                    width: "100%",
+                    boxShadow: "0 25px 60px rgba(0,0,0,0.3)"
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "16px" }}>
+                    <div style={{
+                      width: "48px",
+                      height: "48px",
+                      borderRadius: "12px",
+                      background: "var(--error-soft)",
+                      display: "grid",
+                      placeItems: "center"
+                    }}>
+                      <AlertTriangle size={24} style={{ color: "var(--error)" }} />
+                    </div>
+                    <div>
+                      <h3 style={{ fontSize: "1.2rem", fontWeight: "800", color: "var(--ink)", margin: 0 }}>Delete Account</h3>
+                      <p style={{ fontSize: "0.85rem", color: "var(--muted)", margin: 0 }}>This action cannot be undone</p>
+                    </div>
+                    <button
+                      onClick={() => setShowDeleteModal(false)}
+                      style={{
+                        marginLeft: "auto",
+                        background: "transparent",
+                        border: "none",
+                        cursor: "pointer",
+                        color: "var(--muted)",
+                        padding: "4px"
+                      }}
+                    >
+                      <X size={20} />
+                    </button>
+                  </div>
+
+                  <p style={{ color: "var(--muted)", fontSize: "0.9rem", marginBottom: "20px", lineHeight: "1.5" }}>
+                    Are you sure you want to delete your account? All your progress, settings, and data will be permanently removed.
+                  </p>
+
+                  <form onSubmit={handleDeleteAccount} style={{ display: "grid", gap: "16px" }}>
+                    <div>
+                      <label style={{ display: "block", fontSize: "0.85rem", fontWeight: "bold", marginBottom: "8px", color: "var(--muted)" }}>
+                        Email
+                      </label>
+                      <input
+                        type="email"
+                        value={deleteEmail}
+                        onChange={(e) => setDeleteEmail(e.target.value)}
+                        placeholder="Confirm your email"
+                        required
+                        style={{
+                          width: "100%",
+                          padding: "12px",
+                          borderRadius: "8px",
+                          border: "1px solid var(--line)",
+                          background: "var(--paper)",
+                          color: "var(--ink)",
+                          outline: "none",
+                          fontSize: "1rem"
+                        }}
+                      />
+                    </div>
+                    <div>
+                      <label style={{ display: "block", fontSize: "0.85rem", fontWeight: "bold", marginBottom: "8px", color: "var(--muted)" }}>
+                        Password
+                      </label>
+                      <input
+                        type="password"
+                        value={deletePassword}
+                        onChange={(e) => setDeletePassword(e.target.value)}
+                        placeholder="Enter your password"
+                        required
+                        style={{
+                          width: "100%",
+                          padding: "12px",
+                          borderRadius: "8px",
+                          border: "1px solid var(--line)",
+                          background: "var(--paper)",
+                          color: "var(--ink)",
+                          outline: "none",
+                          fontSize: "1rem"
+                        }}
+                      />
+                    </div>
+
+                    {deleteError && (
+                      <div style={{
+                        padding: "12px",
+                        borderRadius: "8px",
+                        fontSize: "0.85rem",
+                        background: "var(--error-soft)",
+                        color: "var(--error)",
+                        textAlign: "center"
+                      }}>
+                        {deleteError}
+                      </div>
+                    )}
+
+                    <div style={{ display: "flex", gap: "12px" }}>
+                      <button
+                        type="button"
+                        onClick={() => setShowDeleteModal(false)}
+                        style={{
+                          flex: 1,
+                          padding: "12px",
+                          borderRadius: "8px",
+                          border: "1px solid var(--line)",
+                          background: "var(--paper)",
+                          color: "var(--ink)",
+                          fontWeight: "bold",
+                          cursor: "pointer",
+                          transition: "all 0.2s"
+                        }}
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        disabled={isDeleting || deleteEmail !== user?.email}
+                        style={{
+                          flex: 1,
+                          padding: "12px",
+                          borderRadius: "8px",
+                          border: "none",
+                          background: "var(--error)",
+                          color: "white",
+                          fontWeight: "bold",
+                          cursor: isDeleting || deleteEmail !== user?.email ? "not-allowed" : "pointer",
+                          opacity: isDeleting || deleteEmail !== user?.email ? 0.6 : 1,
+                          transition: "all 0.2s"
+                        }}
+                      >
+                        {isDeleting ? "Deleting..." : "Yes, Delete"}
+                      </button>
+                    </div>
+                  </form>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>,
+          document.body
+        )}
 
         {/* Preferences Card */}
         <motion.article 

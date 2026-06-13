@@ -15,7 +15,7 @@ export default function ReadingPage() {
 }
 
 function Reading() {
-  const { level } = useLearning();
+  const { level, setProgress } = useLearning();
   const [showTranslation, setShowTranslation] = useState(false);
   const [passages, setPassages] = useState<{
     id: string;
@@ -114,7 +114,19 @@ function Reading() {
               key={passage.id} 
               passage={passage} 
               isExpanded={expandedId === passage.id}
-              onToggle={() => setExpandedId(expandedId === passage.id ? null : passage.id)}
+              onToggle={() => {
+                const willExpand = expandedId !== passage.id;
+                setExpandedId(willExpand ? passage.id : null);
+                if (willExpand) {
+                  setProgress((current) => ({
+                    ...current,
+                    dailyActions: {
+                      ...current.dailyActions,
+                      readingPassages: current.dailyActions.readingPassages + 1
+                    }
+                  }));
+                }
+              }}
               showTranslation={showTranslation}
             />
           ))}

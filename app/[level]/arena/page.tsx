@@ -15,7 +15,7 @@ export default function ArenaPage() {
 }
 
 function Arena() {
-  const { level } = useLearning();
+  const { level, setProgress } = useLearning();
   const [gameState, setGameState] = useState<"landing" | "playing" | "results">("landing");
   const [currentIndex, setCurrentIndex] = useState(0);
   const [wrongCount, setWrongCount] = useState(0);
@@ -57,6 +57,13 @@ function Arena() {
         setHighScore(correctCount);
         localStorage.setItem(`arena-high-score-${level}`, String(correctCount));
       }
+      setProgress((current) => ({
+        ...current,
+        dailyActions: {
+          ...current.dailyActions,
+          arenaGames: current.dailyActions.arenaGames + 1
+        }
+      }));
     }
     return () => clearInterval(timer);
   }, [gameState, timeLeft, correctCount, highScore, level]);
