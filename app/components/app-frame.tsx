@@ -220,7 +220,8 @@ function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => 
                 textDecoration: "none",
                 color: active ? "var(--sidebar-active-color)" : "var(--ink)",
                 background: active ? "var(--sidebar-active-bg)" : "transparent",
-                transition: "background 0.2s, color 0.2s",
+                borderLeft: active ? "3px solid var(--blue)" : "3px solid transparent",
+                transition: "background 0.2s, color 0.2s, border-color 0.2s",
                 fontWeight: active ? "700" : "500"
               }}
             >

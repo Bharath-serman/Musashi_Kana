@@ -1,12 +1,14 @@
 "use client";
 
 import { useState, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { updateProfile } from "firebase/auth";
 import { useAuth } from "../../components/auth-provider";
 import { AppFrame, PageHeader } from "../../components/app-frame";
 import { useLearning } from "../../components/learning-state";
 import { supabase } from "../../lib/supabase";
-import { Sun, Moon, Camera, Save, User as UserIcon } from "lucide-react";
+import { auth } from "../../lib/firebase";
+import { Sun, Moon, Camera, Save, LogOut, User as UserIcon } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function ProfilePage() {
@@ -20,6 +22,7 @@ export default function ProfilePage() {
 function ProfileDashboard() {
   const { user } = useAuth();
   const { theme, setTheme } = useLearning();
+  const router = useRouter();
 
   const [displayName, setDisplayName] = useState(user?.displayName || "");
   const [photoURL, setPhotoURL] = useState(user?.photoURL || "");
@@ -233,6 +236,23 @@ function ProfileDashboard() {
               }}
             >
               <Save size={18} /> {isSaving ? "Saving..." : "Save Changes"}
+            </button>
+
+            <button
+              onClick={async () => {
+                await auth.signOut();
+                router.push("/");
+              }}
+              style={{
+                display: "flex", alignItems: "center", justifyContent: "center", gap: "8px",
+                width: "100%", padding: "14px", borderRadius: "8px", border: "1px solid var(--line)",
+                background: "var(--paper)", color: "var(--error)", fontWeight: "bold", cursor: "pointer",
+                transition: "all 0.2s"
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = "var(--error-soft)"; e.currentTarget.style.borderColor = "var(--error)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = "var(--paper)"; e.currentTarget.style.borderColor = "var(--line)"; }}
+            >
+              <LogOut size={18} /> Sign out
             </button>
           </form>
         </motion.article>

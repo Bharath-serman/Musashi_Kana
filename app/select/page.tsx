@@ -12,6 +12,18 @@ export default function LevelSelectPage() {
   const router = useRouter();
 
   useEffect(() => {
+    const prev = document.documentElement.getAttribute("data-theme");
+    document.documentElement.setAttribute("data-theme", "dark");
+    return () => {
+      if (prev) {
+        document.documentElement.setAttribute("data-theme", prev);
+      } else {
+        document.documentElement.removeAttribute("data-theme");
+      }
+    };
+  }, []);
+
+  useEffect(() => {
     if (!loading && !user) {
       router.push("/");
     }
@@ -20,7 +32,7 @@ export default function LevelSelectPage() {
   if (loading || !user) return null;
 
   return (
-    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: "#f8f9fa" }}>
+    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: "var(--paper)" }}>
       <button 
         onClick={() => auth.signOut()}
         style={{
@@ -32,12 +44,12 @@ export default function LevelSelectPage() {
           gap: "8px",
           padding: "10px 16px",
           borderRadius: "8px",
-          border: "1px solid #e0e0e0",
-          background: "white",
-          color: "#666",
+          border: "1px solid var(--line)",
+          background: "var(--paper)",
+          color: "var(--muted)",
           cursor: "pointer",
           fontWeight: "bold",
-          boxShadow: "0 2px 8px rgba(0,0,0,0.05)"
+          boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
         }}
       >
         <LogOut size={16} /> Sign out
@@ -48,8 +60,8 @@ export default function LevelSelectPage() {
         animate={{ opacity: 1, y: 0 }}
         style={{ textAlign: "center", marginBottom: "60px" }}
       >
-        <h1 style={{ fontSize: "3rem", fontWeight: "900", color: "#1a1a1a", marginBottom: "12px" }}>Choose your path</h1>
-        <p style={{ fontSize: "1.2rem", color: "#666" }}>Which JLPT level are you targeting today?</p>
+        <h1 style={{ fontSize: "3rem", fontWeight: "900", color: "var(--ink)", marginBottom: "12px" }}>Choose your path</h1>
+        <p style={{ fontSize: "1.2rem", color: "var(--muted)" }}>Which JLPT level are you targeting today?</p>
       </motion.div>
 
       <div style={{ display: "flex", gap: "40px", flexWrap: "wrap", justifyContent: "center", padding: "0 20px" }}>
@@ -63,9 +75,10 @@ export default function LevelSelectPage() {
             width: "300px",
             height: "400px",
             borderRadius: "24px",
-            border: "none",
-            background: "linear-gradient(145deg, #ffffff, #f0f0f0)",
-            boxShadow: "20px 20px 60px #d9d9d9, -20px -20px 60px #ffffff",
+            border: "1px solid var(--card-glass-border)",
+            background: "var(--card-glass-bg)",
+            backdropFilter: "blur(10px)",
+            boxShadow: "0 20px 60px rgba(0,0,0,0.3)",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
@@ -80,8 +93,8 @@ export default function LevelSelectPage() {
         >
           <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "8px", background: "#4dabf7" }} />
           <h2 style={{ fontSize: "5rem", fontWeight: "900", color: "#4dabf7", margin: 0 }}>N5</h2>
-          <h3 style={{ fontSize: "1.5rem", color: "#333", margin: "10px 0" }}>Beginner</h3>
-          <p style={{ color: "#888", textAlign: "center", padding: "0 30px" }}>Master the fundamentals: basic kanji, essential grammar, and everyday vocabulary.</p>
+          <h3 style={{ fontSize: "1.5rem", color: "var(--ink)", margin: "10px 0" }}>Beginner</h3>
+          <p style={{ color: "var(--muted)", textAlign: "center", padding: "0 30px" }}>Master the fundamentals: basic kanji, essential grammar, and everyday vocabulary.</p>
         </motion.button>
 
         {/* N4 Path */}
@@ -94,9 +107,10 @@ export default function LevelSelectPage() {
             width: "300px",
             height: "400px",
             borderRadius: "24px",
-            border: "none",
-            background: "linear-gradient(145deg, #ffffff, #f0f0f0)",
-            boxShadow: "20px 20px 60px #d9d9d9, -20px -20px 60px #ffffff",
+            border: "1px solid var(--card-glass-border)",
+            background: "var(--card-glass-bg)",
+            backdropFilter: "blur(10px)",
+            boxShadow: "0 20px 60px rgba(0,0,0,0.3)",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
@@ -111,8 +125,8 @@ export default function LevelSelectPage() {
         >
           <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "8px", background: "#ff6b6b" }} />
           <h2 style={{ fontSize: "5rem", fontWeight: "900", color: "#ff6b6b", margin: 0 }}>N4</h2>
-          <h3 style={{ fontSize: "1.5rem", color: "#333", margin: "10px 0" }}>Elementary</h3>
-          <p style={{ color: "#888", textAlign: "center", padding: "0 30px" }}>Expand your horizons: complex sentences, more kanji, and natural conversations.</p>
+          <h3 style={{ fontSize: "1.5rem", color: "var(--ink)", margin: "10px 0" }}>Elementary</h3>
+          <p style={{ color: "var(--muted)", textAlign: "center", padding: "0 30px" }}>Expand your horizons: complex sentences, more kanji, and natural conversations.</p>
         </motion.button>
       </div>
     </div>
