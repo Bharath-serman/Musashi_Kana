@@ -2,17 +2,13 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { BookOpen, Brain, Check, Flame, GraduationCap, RefreshCcw, Sparkles } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { BookOpen, Brain, Check, Flame, GraduationCap, Sparkles, Trophy, Download, ArrowRight } from "lucide-react";
 import { AppFrame, Metric } from "../components/app-frame";
 import { defaultProgress, useLearning } from "../components/learning-state";
-import { motion } from "framer-motion";
-
-const taskList = [
-  "Review 12 flashcards",
-  "Read one passage",
-  "Write 8 symbols",
-  "Complete mini quiz"
-];
+import { motion, AnimatePresence } from "framer-motion";
+import { getTodayKey, getFormattedDate } from "../lib/daily-tasks";
+import QuestCompletePopup from "../components/quest-complete-popup";
 
 export default function DashboardPage() {
   return (
@@ -23,16 +19,110 @@ export default function DashboardPage() {
 }
 
 function Dashboard() {
-  const { data, level, progress, progressPercent, setProgress, theme } = useLearning();
+  const { data, level, progress, progressPercent, setProgress, theme, dailyTasks, getTaskProgress, isAllDailyTasksComplete, showQuestComplete, setShowQuestComplete } = useLearning();
+  const [downloading, setDownloading] = useState(false);
 
-  function toggleTask(task: string) {
-    setProgress((current) => ({
-      ...current,
-      completedTasks: current.completedTasks.includes(task)
-        ? current.completedTasks.filter((item) => item !== task)
-        : [...current.completedTasks, task]
-    }));
+  const todayKey = getTodayKey();
+  const allDone = isAllDailyTasksComplete();
+  const formattedDate = getFormattedDate();
+
+  useEffect(() => {
+    if (allDone && !progress.dailyQuestCompleteShown) {
+      setShowQuestComplete(true);
+      setProgress((current) => ({ ...current, dailyQuestCompleteShown: true }));
+    }
+  }, [allDone, progress.dailyQuestCompleteShown, setProgress, setShowQuestComplete]);
+
+  function generateBadge(): Promise<Blob> {
+    return new Promise((resolve) => {
+      const canvas = document.createElement("canvas");
+      canvas.width = 800;
+      canvas.height = 500;
+      const ctx = canvas.getContext("2d")!;
+
+      const isDark = theme === "dark";
+      const bg = isDark ? "#1c1418" : "#ffffff";
+      const ink = isDark ? "#f5f0f2" : "#2a1f26";
+      const muted = isDark ? "#b09ba4" : "#857078";
+      const accent = isDark ? "#f7a4b7" : "#e88ba1";
+      const accentDark = isDark ? "#e88ba1" : "#c96078";
+
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, 800, 500);
+
+      ctx.strokeStyle = accent;
+      ctx.lineWidth = 4;
+      ctx.strokeRect(20, 20, 760, 460);
+
+      ctx.strokeStyle = accentDark;
+      ctx.lineWidth = 2;
+      ctx.strokeRect(30, 30, 740, 440);
+
+      ctx.fillStyle = accent;
+      ctx.beginPath();
+      ctx.arc(400, 110, 50, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = bg;
+      ctx.font = "bold 48px serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("学", 400, 112);
+
+      ctx.fillStyle = ink;
+      ctx.font = "bold 36px Inter, sans-serif";
+      ctx.textBaseline = "alphabetic";
+      ctx.fillText("Musashi_Kana", 400, 195);
+
+      ctx.fillStyle = accentDark;
+      ctx.font = "bold 20px Inter, sans-serif";
+      ctx.fillText(`${level} Daily Quest Complete`, 400, 235);
+
+      ctx.fillStyle = muted;
+      ctx.font = "16px Inter, sans-serif";
+      ctx.fillText(formattedDate, 400, 270);
+
+      ctx.strokeStyle = accent;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(300, 295);
+      ctx.lineTo(500, 295);
+      ctx.stroke();
+
+      ctx.fillStyle = ink;
+      ctx.font = "bold 18px Inter, sans-serif";
+      ctx.fillText("Daily Achievement Unlocked!", 400, 330);
+
+      ctx.fillStyle = muted;
+      ctx.font = "14px Inter, sans-serif";
+      ctx.fillText("All daily tasks completed successfully", 400, 360);
+
+      ctx.fillStyle = accentDark;
+      ctx.font = "bold 12px Inter, sans-serif";
+      ctx.fillText("musashi-kana.app", 400, 450);
+
+      canvas.toBlob((blob) => resolve(blob!), "image/png");
+    });
   }
+
+  const handleDownloadBadge = useCallback(async () => {
+    setDownloading(true);
+    try {
+      const blob = await generateBadge();
+      setProgress((current) => ({ ...current, dailyBadgeClaimed: true }));
+
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `musashi-kana-${level}-badge-${todayKey}.png`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } finally {
+      setDownloading(false);
+    }
+  }, [level, todayKey, theme, data.theme, setProgress]);
 
   return (
     <>
@@ -243,25 +333,11 @@ function Dashboard() {
             border: "1px solid var(--card-glass-border)"
           }}
         >
-          <div className="section-heading" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+          <div className="section-heading" style={{ marginBottom: "20px" }}>
             <div>
               <span style={{ fontSize: "0.75rem", color: "var(--muted)" }}>Progress</span>
               <h2 style={{ fontSize: "1.5rem", fontWeight: "900" }}>Study cockpit</h2>
             </div>
-            <button 
-              className="icon-button" 
-              onClick={() => setProgress(defaultProgress)} 
-              title="Reset progress" 
-              type="button"
-              style={{
-                background: "transparent",
-                border: "none",
-                cursor: "pointer",
-                color: "var(--muted)"
-              }}
-            >
-              <RefreshCcw size={18} />
-            </button>
           </div>
           
           <div style={{ display: "grid", placeItems: "center", marginBottom: "20px" }}>
@@ -276,16 +352,23 @@ function Dashboard() {
               <strong style={{ fontSize: "1.5rem" }}>{progressPercent}%</strong>
             </div>
           </div>
+
+          <div style={{ marginBottom: "20px", textAlign: "center" }}>
+            <span style={{ fontSize: "0.75rem", color: "var(--muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Daily Quest</span>
+            <h3 style={{ fontSize: "1rem", fontWeight: "800", marginTop: "4px" }}>
+              {dailyTasks.filter((t) => getTaskProgress(t) >= t.target).length}/{dailyTasks.length} completed
+            </h3>
+          </div>
           
           <div className="task-list" style={{ display: "grid", gap: "10px" }}>
-            {taskList.map((task) => {
-              const isDone = progress.completedTasks.includes(task);
+            {dailyTasks.map((task) => {
+              const current = getTaskProgress(task);
+              const isDone = current >= task.target;
+              const progress = Math.min(100, Math.round((current / task.target) * 100));
               return (
-                <button 
-                  className={isDone ? "done" : ""} 
-                  key={task} 
-                  onClick={() => toggleTask(task)} 
-                  type="button"
+                <Link
+                  href={`/${level.toLowerCase()}${task.href}`}
+                  key={task.id}
                   style={{
                     display: "flex",
                     alignItems: "center",
@@ -295,11 +378,23 @@ function Dashboard() {
                     border: "1px solid var(--line)",
                     background: isDone ? "var(--success-soft)" : "var(--paper)",
                     color: isDone ? "var(--green)" : "var(--ink)",
-                    cursor: "pointer",
-                    textAlign: "left",
-                    fontWeight: isDone ? "bold" : "normal"
+                    textDecoration: "none",
+                    fontWeight: isDone ? "bold" : "normal",
+                    position: "relative",
+                    overflow: "hidden"
                   }}
                 >
+                  {!isDone && (
+                    <div style={{
+                      position: "absolute",
+                      left: 0,
+                      top: 0,
+                      bottom: 0,
+                      width: `${progress}%`,
+                      background: "var(--success-soft)",
+                      transition: "width 0.3s ease"
+                    }} />
+                  )}
                   <div style={{
                     width: "16px",
                     height: "16px",
@@ -307,15 +402,60 @@ function Dashboard() {
                     border: "2px solid",
                     borderColor: isDone ? "var(--green)" : "var(--muted)",
                     display: "grid",
-                    placeItems: "center"
+                    placeItems: "center",
+                    flexShrink: 0,
+                    position: "relative",
+                    zIndex: 1
                   }}>
                     {isDone && <Check size={12} />}
                   </div>
-                  {task}
-                </button>
+                  <div style={{ flex: 1, position: "relative", zIndex: 1 }}>
+                    <div style={{ fontSize: "0.9rem" }}>{task.title}</div>
+                    {!isDone && (
+                      <div style={{ fontSize: "0.75rem", color: "var(--muted)", marginTop: "2px" }}>
+                        {current}/{task.target} done
+                      </div>
+                    )}
+                  </div>
+                  {!isDone && <ArrowRight size={14} style={{ color: "var(--muted)", position: "relative", zIndex: 1 }} />}
+                </Link>
               );
             })}
           </div>
+
+          {allDone && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              style={{ marginTop: "20px" }}
+            >
+              <button
+                onClick={handleDownloadBadge}
+                disabled={downloading}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "8px",
+                  width: "100%",
+                  padding: "14px",
+                  borderRadius: "8px",
+                  border: progress.dailyBadgeClaimed ? "1px solid var(--green)" : "none",
+                  background: progress.dailyBadgeClaimed ? "transparent" : "var(--green)",
+                  color: progress.dailyBadgeClaimed ? "var(--green)" : "white",
+                  fontWeight: "bold",
+                  cursor: "pointer",
+                  fontSize: "0.95rem",
+                  transition: "transform 0.2s, opacity 0.2s"
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.transform = "translateY(-2px)"}
+                onMouseLeave={(e) => e.currentTarget.style.transform = "none"}
+              >
+                {progress.dailyBadgeClaimed ? <Download size={18} /> : <Trophy size={18} />}
+                {downloading ? "Generating..." : progress.dailyBadgeClaimed ? "Download Badge Again" : "Claim Daily Badge"}
+              </button>
+            </motion.div>
+          )}
         </motion.article>
 
         <motion.article 
@@ -382,6 +522,14 @@ function Dashboard() {
           </div>
         </motion.article>
       </section>
+
+      <QuestCompletePopup
+        isOpen={showQuestComplete}
+        onClose={() => setShowQuestComplete(false)}
+        onDownload={handleDownloadBadge}
+        downloading={downloading}
+        level={level}
+      />
     </>
   );
 }

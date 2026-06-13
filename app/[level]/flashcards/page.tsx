@@ -73,7 +73,14 @@ function Flashcards() {
 
   function markKnown() {
     setIsKnown(true);
-    setProgress((current) => ({ ...current, reviewed: current.reviewed + 1 }));
+    setProgress((current) => ({
+      ...current,
+      reviewed: current.reviewed + 1,
+      dailyActions: {
+        ...current.dailyActions,
+        reviewed: current.dailyActions.reviewed + 1
+      }
+    }));
     
     setTimeout(() => {
       moveCard(1);

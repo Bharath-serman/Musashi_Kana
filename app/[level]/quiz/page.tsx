@@ -90,6 +90,10 @@ function Quiz() {
         setProgress((current) => ({
           ...current,
           quizBest: Math.max(current.quizBest, score),
+          dailyActions: {
+            ...current.dailyActions,
+            quizCompleted: current.dailyActions.quizCompleted + 1
+          }
         }));
       } else {
         setQuizCorrect(nextCorrect);
