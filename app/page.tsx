@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { signInWithPopup, GoogleAuthProvider, GithubAuthProvider, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "./lib/firebase";
@@ -15,6 +15,18 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const prev = document.documentElement.getAttribute("data-theme");
+    document.documentElement.setAttribute("data-theme", "dark");
+    return () => {
+      if (prev) {
+        document.documentElement.setAttribute("data-theme", prev);
+      } else {
+        document.documentElement.removeAttribute("data-theme");
+      }
+    };
+  }, []);
 
   const handleGoogleSignIn = async () => {
     try {
@@ -62,7 +74,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div style={{ position: "relative", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", background: "#f8f9fa" }}>
+    <div style={{ position: "relative", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", background: "var(--paper)" }}>
       <CinematicBackground />
 
       <motion.div
@@ -73,14 +85,14 @@ export default function LoginPage() {
           width: "100%",
           maxWidth: "420px",
           padding: "40px",
-          background: "rgba(255, 255, 255, 0.85)",
+          background: "var(--card-glass-bg)",
           backdropFilter: "blur(20px)",
           borderRadius: "24px",
-          border: "1px solid rgba(0, 0, 0, 0.05)",
-          boxShadow: "0 20px 60px rgba(0,0,0,0.1)",
+          border: "1px solid var(--card-glass-border)",
+          boxShadow: "0 20px 60px rgba(0,0,0,0.3)",
           position: "relative",
           zIndex: 10,
-          color: "#333"
+          color: "var(--ink)"
         }}
       >
         <div style={{ textAlign: "center", marginBottom: "40px" }}>
@@ -104,10 +116,10 @@ export default function LoginPage() {
           >
             学
           </motion.div>
-          <h1 style={{ fontSize: "2rem", fontWeight: "900", marginBottom: "8px", letterSpacing: "-0.02em", color: "#111" }}>
+          <h1 style={{ fontSize: "2rem", fontWeight: "900", marginBottom: "8px", letterSpacing: "-0.02em", color: "var(--ink)" }}>
             Musashi_Kana
           </h1>
-          <p style={{ color: "#666", fontSize: "0.95rem" }}>
+          <p style={{ color: "var(--muted)", fontSize: "0.95rem" }}>
              JLPT N5 & N4 learning experience
           </p>
         </div>
@@ -117,12 +129,12 @@ export default function LoginPage() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             style={{
-              background: "rgba(255, 75, 75, 0.1)",
-              border: "1px solid rgba(255, 75, 75, 0.3)",
+              background: "var(--red-soft)",
+              border: "1px solid var(--red)",
               padding: "12px",
               borderRadius: "8px",
               marginBottom: "20px",
-              color: "#d32f2f",
+              color: "var(--red)",
               fontSize: "0.85rem",
               textAlign: "center"
             }}
@@ -143,13 +155,13 @@ export default function LoginPage() {
               width: "100%",
               padding: "14px",
               borderRadius: "12px",
-              border: "1px solid #e0e0e0",
-              background: "white",
-              color: "#333",
+              border: "1px solid var(--line)",
+              background: "var(--paper)",
+              color: "var(--ink)",
               fontWeight: "600",
               cursor: "pointer",
               transition: "transform 0.2s, box-shadow 0.2s",
-              boxShadow: "0 2px 8px rgba(0,0,0,0.05)"
+              boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
             }}
             onMouseEnter={(e) => e.currentTarget.style.transform = "translateY(-2px)"}
             onMouseLeave={(e) => e.currentTarget.style.transform = "none"}
@@ -174,20 +186,20 @@ export default function LoginPage() {
               width: "100%",
               padding: "14px",
               borderRadius: "12px",
-              border: "1px solid #333",
-              background: "#24292e",
-              color: "white",
+              border: "1px solid var(--line)",
+              background: "var(--ink)",
+              color: "var(--paper)",
               fontWeight: "600",
               cursor: "pointer",
               transition: "transform 0.2s, background 0.2s"
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.transform = "translateY(-2px)";
-              e.currentTarget.style.background = "#000";
+              e.currentTarget.style.background = "var(--blue-dark)";
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.transform = "none";
-              e.currentTarget.style.background = "#24292e";
+              e.currentTarget.style.background = "var(--ink)";
             }}
           >
             <Github size={20} />
@@ -196,9 +208,9 @@ export default function LoginPage() {
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: "16px", margin: "24px 0" }}>
-          <div style={{ flex: 1, height: "1px", background: "#e0e0e0" }} />
-          <span style={{ fontSize: "0.8rem", textTransform: "uppercase", letterSpacing: "0.1em", color: "#888" }}>or Email</span>
-          <div style={{ flex: 1, height: "1px", background: "#e0e0e0" }} />
+          <div style={{ flex: 1, height: "1px", background: "var(--line)" }} />
+          <span style={{ fontSize: "0.8rem", textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--muted)" }}>or Email</span>
+          <div style={{ flex: 1, height: "1px", background: "var(--line)" }} />
         </div>
 
         <form onSubmit={handleEmailAuth} style={{ display: "grid", gap: "16px" }}>
@@ -213,14 +225,14 @@ export default function LoginPage() {
                 width: "100%",
                 padding: "16px",
                 borderRadius: "12px",
-                border: "1px solid #ccc",
-                background: "white",
-                color: "#333",
+                border: "1px solid var(--line)",
+                background: "var(--paper)",
+                color: "var(--ink)",
                 fontSize: "1rem",
                 outline: "none"
               }}
-              onFocus={(e) => e.target.style.borderColor = "#FF8E8B"}
-              onBlur={(e) => e.target.style.borderColor = "#ccc"}
+              onFocus={(e) => e.target.style.borderColor = "var(--blue)"}
+              onBlur={(e) => e.target.style.borderColor = "var(--line)"}
             />
           </div>
           <div>
@@ -234,14 +246,14 @@ export default function LoginPage() {
                 width: "100%",
                 padding: "16px",
                 borderRadius: "12px",
-                border: "1px solid #ccc",
-                background: "white",
-                color: "#333",
+                border: "1px solid var(--line)",
+                background: "var(--paper)",
+                color: "var(--ink)",
                 fontSize: "1rem",
                 outline: "none"
               }}
-              onFocus={(e) => e.target.style.borderColor = "#FF8E8B"}
-              onBlur={(e) => e.target.style.borderColor = "#ccc"}
+              onFocus={(e) => e.target.style.borderColor = "var(--blue)"}
+              onBlur={(e) => e.target.style.borderColor = "var(--line)"}
             />
           </div>
           <button
@@ -251,12 +263,12 @@ export default function LoginPage() {
               padding: "16px",
               borderRadius: "12px",
               border: "none",
-              background: "linear-gradient(135deg, #FF6B6B 0%, #FF8E8B 100%)",
+              background: "var(--blue)",
               color: "white",
               fontWeight: "700",
               fontSize: "1.05rem",
               cursor: "pointer",
-              boxShadow: "0 10px 20px rgba(255, 107, 107, 0.3)",
+              boxShadow: "0 10px 20px rgba(232, 139, 161, 0.3)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -270,7 +282,7 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <p style={{ textAlign: "center", marginTop: "24px", color: "#666", fontSize: "0.9rem" }}>
+        <p style={{ textAlign: "center", marginTop: "24px", color: "var(--muted)", fontSize: "0.9rem" }}>
           {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
           <button
             type="button"
@@ -278,7 +290,7 @@ export default function LoginPage() {
             style={{
               background: "none",
               border: "none",
-              color: "#FF6B6B",
+              color: "var(--blue)",
               fontWeight: "bold",
               cursor: "pointer",
               padding: 0,

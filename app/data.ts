@@ -23,7 +23,7 @@ export type QuizQuestion = {
 
 export const course = {
   N5: {
-    theme: "Foundation",
+    theme: "Musashi_Kana",
     headline: "Build a clean N5 base",
     description:
       "Learn the kana, high-frequency vocabulary, essential kanji, beginner grammar, and short reading patterns that make N5 stop feeling scattered.",
