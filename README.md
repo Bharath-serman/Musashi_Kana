@@ -62,21 +62,21 @@ npm run typecheck
 
 Runs TypeScript type checking without emitting files.
 
-## Project Structure
+## Screenshots
 
-```text
-app/
-  components/      Shared layout and learning state components
-  flashcards/      Vocabulary and kanji flashcards
-  grammar/         Grammar study room
-  quiz/            Checkpoint quiz
-  reading/         Reading practice
-  roadmap/         Study roadmap
-  writing/         Writing practice
-  data.ts          N5 and N4 course content
-public/
-  study-scene.png  Dashboard visual asset
-```
+<img width="1887" height="977" alt="image" src="https://github.com/user-attachments/assets/8296aa25-7cdc-45e6-9db0-64b67005e3d0" />
+
+<img width="1895" height="990" alt="image" src="https://github.com/user-attachments/assets/52d356c3-394d-4e65-8c46-4120331266f9" />
+
+<img width="1893" height="978" alt="image" src="https://github.com/user-attachments/assets/320adcf6-5a83-410b-b8eb-13b816610e69" />
+
+<img width="1895" height="986" alt="image" src="https://github.com/user-attachments/assets/7161c56c-6adb-448b-8562-6ec933d36f28" />
+
+<img width="1890" height="975" alt="image" src="https://github.com/user-attachments/assets/a2ce1957-af38-4d02-8a4e-289a0d0a5d21" />
+
+<img width="1907" height="987" alt="image" src="https://github.com/user-attachments/assets/0318a86f-26e8-4cd6-9a81-e5a9ded4c517" />
+
+<img width="1912" height="892" alt="image" src="https://github.com/user-attachments/assets/635cc808-84ef-4c5a-842b-30c9c8ff3e40" />
 
 ## Notes
 
