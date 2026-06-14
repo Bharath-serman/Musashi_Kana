@@ -2,11 +2,11 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { BookOpen, Brain, Check, Flame, GraduationCap, Sparkles, Trophy, Download, ArrowRight } from "lucide-react";
-import { AppFrame, Metric } from "../components/app-frame";
-import { defaultProgress, useLearning } from "../components/learning-state";
-import { motion, AnimatePresence } from "framer-motion";
+import { useCallback, useEffect, useState } from "react";
+import { BookOpen, Brain, Check, Flame, Trophy, Download, ArrowUpRight, Sparkles } from "lucide-react";
+import { AppFrame } from "../components/app-frame";
+import { useLearning } from "../components/learning-state";
+import { motion } from "framer-motion";
 import { getTodayKey, getFormattedDate } from "../lib/daily-tasks";
 import QuestCompletePopup from "../components/quest-complete-popup";
 
@@ -25,6 +25,7 @@ function Dashboard() {
   const todayKey = getTodayKey();
   const allDone = isAllDailyTasksComplete();
   const formattedDate = getFormattedDate();
+  const completedCount = dailyTasks.filter((t) => getTaskProgress(t) >= t.target).length;
 
   useEffect(() => {
     if (allDone && !progress.dailyQuestCompleteShown) {
@@ -122,406 +123,248 @@ function Dashboard() {
     } finally {
       setDownloading(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [level, todayKey, theme, data.theme, setProgress]);
 
   return (
     <>
-      <motion.section 
-        className="hero"
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
-        style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: "40px",
-          alignItems: "center",
-          marginBottom: "60px"
-        }}
-      >
-        <div className="hero-copy">
-          <motion.div 
-            className="pill"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2 }}
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "8px",
-              background: "rgba(232, 139, 161, 0.1)",
-              color: "var(--blue)",
-              padding: "6px 12px",
-              borderRadius: "999px",
-              fontSize: "0.85rem",
-              fontWeight: "bold",
-              textTransform: "uppercase"
-            }}
-          >
-            <Sparkles size={14} /> {data.theme} track
-          </motion.div>
-          
-          <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.6 }}
-            style={{
-              fontSize: "clamp(3rem, 6vw, 5rem)",
-              fontWeight: "900",
-              lineHeight: "0.9",
-              marginTop: "20px",
-              marginBottom: "20px",
-              color: "var(--ink)"
-            }}
-          >
-            {data.headline}
-          </motion.h1>
-          
-          <motion.p 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
-            style={{
-              fontSize: "1.2rem",
-              color: "var(--muted)",
-              maxWidth: "500px",
-              lineHeight: "1.6"
-            }}
-          >
-            {data.description}
-          </motion.p>
-          
-          <motion.div 
-            className="hero-actions"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
-            style={{
-              display: "flex",
-              gap: "16px",
-              marginTop: "30px"
-            }}
-          >
-            <Link 
-              className="primary-action" 
+      {/* Hero */}
+      <div style={{ marginBottom: "48px" }}>
+        <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: "24px", flexWrap: "wrap" }}>
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "8px" }}>
+              <span style={{ fontSize: "0.7rem", fontWeight: "800", textTransform: "uppercase", letterSpacing: "0.12em", color: "var(--blue)" }}>{data.theme} path</span>
+              <span style={{ fontSize: "0.7rem", color: "var(--muted)" }}>|</span>
+              <span style={{ fontSize: "0.7rem", color: "var(--muted)" }}>{formattedDate}</span>
+            </div>
+            <h1 style={{ fontSize: "clamp(2.2rem, 5vw, 3.2rem)", fontWeight: "900", lineHeight: "1.05", color: "var(--ink)", letterSpacing: "-0.02em" }}>
+              {data.headline}
+            </h1>
+            <p style={{ fontSize: "1rem", color: "var(--muted)", marginTop: "10px", maxWidth: "420px", lineHeight: "1.5" }}>
+              {data.description}
+            </p>
+          </div>
+
+          <div style={{ display: "flex", gap: "10px" }}>
+            <Link
               href={`/${level.toLowerCase()}/flashcards`}
               style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "8px",
+                padding: "10px 20px",
+                borderRadius: "6px",
                 background: "var(--ink)",
                 color: "var(--paper)",
-                padding: "14px 28px",
-                borderRadius: "8px",
-                fontWeight: "bold",
                 textDecoration: "none",
-                boxShadow: "0 10px 20px rgba(0,0,0,0.1)",
-                transition: "transform 0.2s"
+                fontWeight: "700",
+                fontSize: "0.85rem"
               }}
             >
-              Start flashcards
+              Start Studying
             </Link>
-            <Link 
-              className="secondary-action" 
+            <Link
               href={`/${level.toLowerCase()}/roadmap`}
               style={{
-                background: "var(--card-glass-bg)",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "8px",
+                padding: "10px 20px",
+                borderRadius: "6px",
+                background: "transparent",
                 color: "var(--ink)",
-                padding: "14px 28px",
-                borderRadius: "8px",
-                fontWeight: "bold",
                 textDecoration: "none",
-                border: "1px solid var(--line)",
-                transition: "background 0.2s"
+                fontWeight: "700",
+                fontSize: "0.85rem",
+                border: "1px solid var(--line)"
               }}
             >
-              View roadmap
+              Roadmap
             </Link>
-          </motion.div>
+          </div>
         </div>
-        
-        <motion.div 
-          className="hero-visual"
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.4, duration: 0.8 }}
-          style={{
-            position: "relative"
-          }}
-        >
-          <div style={{
-            borderRadius: "20px",
-            overflow: "hidden",
-            boxShadow: "var(--shadow)",
-            background: "var(--glass-bg)",
-            backdropFilter: "blur(10px)",
-            padding: "10px"
-          }}>
-            <Image 
-              src={theme === "dark" ? "/study-scene-dark.png" : "/study-scene.png"} 
-              alt="Japanese study desk with flashcards and notebook" 
-              width={1200} 
-              height={800} 
-              priority 
-              style={{
-                borderRadius: "16px",
-                display: "block",
-                width: "100%",
-                height: "auto"
-              }}
-            />
+      </div>
+
+      {/* Stats Row */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "2px", marginBottom: "32px", background: "var(--line)", borderRadius: "12px", overflow: "hidden" }}>
+        {[
+          { icon: <BookOpen size={18} />, label: "Words", value: data.stats.words.toLocaleString(), accent: false },
+          { icon: <Brain size={18} />, label: "Kanji", value: data.stats.kanji.toString(), accent: false },
+          { icon: <Sparkles size={18} />, label: "Grammar", value: data.stats.grammar.toString(), accent: false },
+          { icon: <Flame size={18} />, label: "Streak", value: `${progress.streak}d`, accent: true }
+        ].map((stat, i) => (
+          <div key={i} style={{ padding: "20px 24px", background: "var(--paper)", display: "flex", flexDirection: "column", gap: "8px" }}>
+            <div style={{ color: stat.accent ? "var(--blue)" : "var(--muted)" }}>{stat.icon}</div>
+            <div style={{ fontSize: "1.6rem", fontWeight: "900", color: "var(--ink)", lineHeight: "1" }}>{stat.value}</div>
+            <div style={{ fontSize: "0.75rem", fontWeight: "600", color: "var(--muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>{stat.label}</div>
           </div>
-          
-          <motion.div 
-            className="mission-card"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.8 }}
-            style={{
-              position: "absolute",
-              bottom: "30px",
-              right: "-20px",
-              background: "var(--card-glass-bg)",
-              backdropFilter: "blur(10px)",
-              padding: "20px",
-              borderRadius: "12px",
-              boxShadow: "0 20px 40px rgba(0,0,0,0.15)",
-              maxWidth: "280px",
-              border: "1px solid var(--card-glass-border)"
-            }}
-          >
-            <span style={{ fontSize: "0.75rem", textTransform: "uppercase", color: "var(--blue)", fontWeight: "bold" }}>Smart session</span>
-            <strong style={{ display: "block", marginTop: "6px", fontSize: "1rem", color: "var(--ink)" }}>{data.mission}</strong>
-          </motion.div>
-        </motion.div>
-      </motion.section>
+        ))}
+      </div>
 
-      <motion.section 
-        className="metrics" 
-        aria-label="Learning overview"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.8 }}
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-          gap: "20px",
-          marginBottom: "40px"
-        }}
-      >
-        <Metric icon={<GraduationCap />} label="Target words" value={data.stats.words.toLocaleString()} />
-        <Metric icon={<BookOpen />} label="Kanji scope" value={data.stats.kanji.toString()} />
-        <Metric icon={<Brain />} label="Grammar points" value={data.stats.grammar.toString()} />
-        <Metric icon={<Flame />} label="Saved streak" value={`${progress.streak} day`} />
-      </motion.section>
+      {/* Main Grid */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "24px" }}>
 
-      <section 
-        className="dashboard-grid"
-        style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1.5fr",
-          gap: "30px"
-        }}
-      >
-        <motion.article 
-          className="panel progress-panel"
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 1 }}
-          style={{
-            background: "var(--card-glass-bg)",
-            backdropFilter: "blur(10px)",
-            borderRadius: "16px",
-            padding: "30px",
-            border: "1px solid var(--card-glass-border)"
-          }}
-        >
-          <div className="section-heading" style={{ marginBottom: "20px" }}>
-            <div>
-              <span style={{ fontSize: "0.75rem", color: "var(--muted)" }}>Progress</span>
-              <h2 style={{ fontSize: "1.5rem", fontWeight: "900" }}>Study cockpit</h2>
+        {/* Left Column - Quest */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+          {/* Progress */}
+          <div style={{ padding: "24px", borderRadius: "10px", border: "1px solid var(--line)", background: "var(--paper)" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "20px" }}>
+              <span style={{ fontSize: "0.8rem", fontWeight: "800", textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--muted)" }}>Overall Progress</span>
+              <span style={{ fontSize: "1.4rem", fontWeight: "900", color: "var(--ink)" }}>{progressPercent}%</span>
             </div>
-          </div>
-          
-          <div style={{ display: "grid", placeItems: "center", marginBottom: "20px" }}>
-            <div className="progress-ring" style={{ 
-              width: "120px", 
-              height: "120px", 
-              borderRadius: "50%", 
-              border: "10px solid var(--line)", 
-              display: "grid", 
-              placeItems: "center"
-            }}>
-              <strong style={{ fontSize: "1.5rem" }}>{progressPercent}%</strong>
+            <div style={{ height: "6px", borderRadius: "3px", background: "var(--line)", overflow: "hidden" }}>
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${progressPercent}%` }}
+                transition={{ duration: 1, ease: "easeOut" }}
+                style={{ height: "100%", borderRadius: "3px", background: "linear-gradient(90deg, var(--blue), var(--green))" }}
+              />
             </div>
           </div>
 
-          <div style={{ marginBottom: "20px", textAlign: "center" }}>
-            <span style={{ fontSize: "0.75rem", color: "var(--muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Daily Quest</span>
-            <h3 style={{ fontSize: "1rem", fontWeight: "800", marginTop: "4px" }}>
-              {dailyTasks.filter((t) => getTaskProgress(t) >= t.target).length}/{dailyTasks.length} completed
-            </h3>
-          </div>
-          
-          <div className="task-list" style={{ display: "grid", gap: "10px" }}>
-            {dailyTasks.map((task) => {
-              const current = getTaskProgress(task);
-              const isDone = current >= task.target;
-              const progress = Math.min(100, Math.round((current / task.target) * 100));
-              return (
-                <Link
-                  href={`/${level.toLowerCase()}${task.href}`}
-                  key={task.id}
+          {/* Daily Quest */}
+          <div style={{ padding: "24px", borderRadius: "10px", border: "1px solid var(--line)", background: "var(--paper)", flex: 1 }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "6px" }}>
+              <span style={{ fontSize: "0.8rem", fontWeight: "800", textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--muted)" }}>Daily Quest</span>
+              <span style={{ fontSize: "0.8rem", fontWeight: "700", color: "var(--green)" }}>{completedCount}/{dailyTasks.length}</span>
+            </div>
+            <h3 style={{ fontSize: "1.1rem", fontWeight: "800", color: "var(--ink)", marginBottom: "20px" }}>Today&apos;s Challenges</h3>
+
+            <div style={{ display: "grid", gap: "8px" }}>
+              {dailyTasks.map((task) => {
+                const current = getTaskProgress(task);
+                const isDone = current >= task.target;
+                const pct = Math.min(100, Math.round((current / task.target) * 100));
+                return (
+                  <Link
+                    href={`/${level.toLowerCase()}${task.href}`}
+                    key={task.id}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "12px",
+                      padding: "14px 16px",
+                      borderRadius: "8px",
+                      textDecoration: "none",
+                      color: "var(--ink)",
+                      background: isDone ? "var(--success-soft)" : "var(--panel)",
+                      border: "1px solid",
+                      borderColor: isDone ? "rgba(19,128,95,0.25)" : "var(--line)",
+                      transition: "border-color 0.15s"
+                    }}
+                  >
+                    <div style={{
+                      width: "22px",
+                      height: "22px",
+                      borderRadius: "50%",
+                      border: "2px solid",
+                      borderColor: isDone ? "var(--green)" : "var(--muted)",
+                      background: isDone ? "var(--green)" : "transparent",
+                      display: "grid",
+                      placeItems: "center",
+                      flexShrink: 0
+                    }}>
+                      {isDone && <Check size={12} color="white" strokeWidth={3} />}
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: "0.88rem", fontWeight: isDone ? "700" : "600" }}>{task.title}</div>
+                      {!isDone && (
+                        <div style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "6px" }}>
+                          <div style={{ flex: 1, height: "3px", borderRadius: "2px", background: "var(--line)", overflow: "hidden" }}>
+                            <div style={{ width: `${pct}%`, height: "100%", background: "var(--blue)", borderRadius: "2px", transition: "width 0.3s" }} />
+                          </div>
+                          <span style={{ fontSize: "0.7rem", fontWeight: "600", color: "var(--muted)" }}>{current}/{task.target}</span>
+                        </div>
+                      )}
+                    </div>
+                    {!isDone && <ArrowUpRight size={14} color="var(--muted)" />}
+                  </Link>
+                );
+              })}
+            </div>
+
+            {allDone && (
+              <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} style={{ marginTop: "16px" }}>
+                <button
+                  onClick={handleDownloadBadge}
+                  disabled={downloading}
                   style={{
                     display: "flex",
                     alignItems: "center",
-                    gap: "10px",
-                    padding: "12px",
+                    justifyContent: "center",
+                    gap: "8px",
+                    width: "100%",
+                    padding: "14px",
                     borderRadius: "8px",
-                    border: "1px solid var(--line)",
-                    background: isDone ? "var(--success-soft)" : "var(--paper)",
-                    color: isDone ? "var(--green)" : "var(--ink)",
-                    textDecoration: "none",
-                    fontWeight: isDone ? "bold" : "normal",
-                    position: "relative",
-                    overflow: "hidden"
+                    border: "none",
+                    background: "var(--green)",
+                    color: "white",
+                    fontWeight: "700",
+                    fontSize: "0.9rem",
+                    cursor: "pointer"
                   }}
                 >
-                  {!isDone && (
-                    <div style={{
-                      position: "absolute",
-                      left: 0,
-                      top: 0,
-                      bottom: 0,
-                      width: `${progress}%`,
-                      background: "var(--success-soft)",
-                      transition: "width 0.3s ease"
-                    }} />
-                  )}
-                  <div style={{
-                    width: "16px",
-                    height: "16px",
-                    borderRadius: "4px",
-                    border: "2px solid",
-                    borderColor: isDone ? "var(--green)" : "var(--muted)",
-                    display: "grid",
-                    placeItems: "center",
-                    flexShrink: 0,
-                    position: "relative",
-                    zIndex: 1
-                  }}>
-                    {isDone && <Check size={12} />}
-                  </div>
-                  <div style={{ flex: 1, position: "relative", zIndex: 1 }}>
-                    <div style={{ fontSize: "0.9rem" }}>{task.title}</div>
-                    {!isDone && (
-                      <div style={{ fontSize: "0.75rem", color: "var(--muted)", marginTop: "2px" }}>
-                        {current}/{task.target} done
-                      </div>
-                    )}
-                  </div>
-                  {!isDone && <ArrowRight size={14} style={{ color: "var(--muted)", position: "relative", zIndex: 1 }} />}
-                </Link>
-              );
-            })}
+                  {progress.dailyBadgeClaimed ? <Download size={16} /> : <Trophy size={16} />}
+                  {downloading ? "Generating..." : progress.dailyBadgeClaimed ? "Download Badge Again" : "Claim Badge"}
+                </button>
+              </motion.div>
+            )}
           </div>
+        </div>
 
-          {allDone && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              style={{ marginTop: "20px" }}
-            >
-              <button
-                onClick={handleDownloadBadge}
-                disabled={downloading}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: "8px",
-                  width: "100%",
-                  padding: "14px",
-                  borderRadius: "8px",
-                  border: progress.dailyBadgeClaimed ? "1px solid var(--green)" : "none",
-                  background: progress.dailyBadgeClaimed ? "transparent" : "var(--green)",
-                  color: progress.dailyBadgeClaimed ? "var(--green)" : "white",
-                  fontWeight: "bold",
-                  cursor: "pointer",
-                  fontSize: "0.95rem",
-                  transition: "transform 0.2s, opacity 0.2s"
-                }}
-                onMouseEnter={(e) => e.currentTarget.style.transform = "translateY(-2px)"}
-                onMouseLeave={(e) => e.currentTarget.style.transform = "none"}
-              >
-                {progress.dailyBadgeClaimed ? <Download size={18} /> : <Trophy size={18} />}
-                {downloading ? "Generating..." : progress.dailyBadgeClaimed ? "Download Badge Again" : "Claim Daily Badge"}
-              </button>
-            </motion.div>
-          )}
-        </motion.article>
-
-        <motion.article 
-          className="panel"
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 1.2 }}
-          style={{
-            background: "var(--card-glass-bg)",
-            backdropFilter: "blur(10px)",
-            borderRadius: "16px",
-            padding: "30px",
-            border: "1px solid var(--card-glass-border)"
-          }}
-        >
-          <div className="section-heading" style={{ marginBottom: "20px" }}>
-            <div>
-              <span style={{ fontSize: "0.75rem", color: "var(--muted)" }}>Quick launch</span>
-              <h2 style={{ fontSize: "1.5rem", fontWeight: "900" }}>{level} study rooms</h2>
+        {/* Right Column - Study Rooms + Hero Image */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+          {/* Hero Image */}
+          <div style={{ borderRadius: "10px", overflow: "hidden", position: "relative", aspectRatio: "16/9", border: "1px solid var(--line)" }}>
+            <Image
+              src={theme === "dark" ? "/study-scene-dark.png" : "/study-scene.png"}
+              alt="Study scene"
+              fill
+              priority
+              style={{ objectFit: "cover" }}
+            />
+            <div style={{ position: "absolute", bottom: "16px", left: "16px", right: "16px", padding: "14px 18px", borderRadius: "8px", background: "rgba(0,0,0,0.65)", backdropFilter: "blur(12px)" }}>
+              <span style={{ fontSize: "0.65rem", fontWeight: "800", textTransform: "uppercase", letterSpacing: "0.1em", color: "rgba(255,255,255,0.6)" }}>Recommended</span>
+              <div style={{ fontSize: "0.95rem", fontWeight: "700", color: "white", marginTop: "2px" }}>{data.mission}</div>
             </div>
           </div>
-          
-          <div className="route-grid" style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
-            gap: "16px"
-          }}>
-            {[
-              { href: `/${level.toLowerCase()}/flashcards`, title: "Flashcards", desc: "Vocabulary and kanji recall" },
-              { href: `/${level.toLowerCase()}/grammar`, title: "Grammar", desc: "Patterns, examples, and notes" },
-              { href: `/${level.toLowerCase()}/reading`, title: "Reading", desc: "Passage, translation, questions" },
-              { href: `/${level.toLowerCase()}/writing`, title: "Writing", desc: "Guided kana and kanji canvas" },
-              { href: `/${level.toLowerCase()}/quiz`, title: "Quiz", desc: "Checkpoint questions" },
-              { href: `/${level.toLowerCase()}/roadmap`, title: "Roadmap", desc: "Study sequence and resources" }
-            ].map((route) => (
-              <Link 
-                key={route.href}
-                href={route.href}
-                style={{
-                  background: "var(--paper)",
-                  padding: "20px",
-                  borderRadius: "12px",
-                  textDecoration: "none",
-                  color: "var(--ink)",
-                  border: "1px solid var(--line)",
-                  transition: "transform 0.2s, box-shadow 0.2s",
-                  display: "grid",
-                  gap: "4px"
-                }}
-                className="route-card"
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = "translateY(-5px)";
-                  e.currentTarget.style.boxShadow = "0 10px 20px rgba(0,0,0,0.05)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = "none";
-                  e.currentTarget.style.boxShadow = "none";
-                }}
-              >
-                <strong style={{ fontSize: "1.1rem" }}>{route.title}</strong>
-                <span style={{ fontSize: "0.8rem", color: "var(--muted)" }}>{route.desc}</span>
-              </Link>
-            ))}
+
+          {/* Study Rooms */}
+          <div style={{ padding: "24px", borderRadius: "10px", border: "1px solid var(--line)", background: "var(--paper)", flex: 1 }}>
+            <span style={{ fontSize: "0.8rem", fontWeight: "800", textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--muted)" }}>Study Rooms</span>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", marginTop: "16px" }}>
+              {[
+                { href: `/${level.toLowerCase()}/flashcards`, title: "Flashcards", color: "#e88ba1" },
+                { href: `/${level.toLowerCase()}/grammar`, title: "Grammar", color: "#7c6fef" },
+                { href: `/${level.toLowerCase()}/reading`, title: "Reading", color: "#4dabf7" },
+                { href: `/${level.toLowerCase()}/writing`, title: "Writing", color: "#f76707" },
+                { href: `/${level.toLowerCase()}/quiz`, title: "Quiz", color: "#1ba37a" },
+                { href: `/${level.toLowerCase()}/arena`, title: "Arena", color: "#d63384" }
+              ].map((room) => (
+                <Link
+                  key={room.href}
+                  href={room.href}
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "6px",
+                    padding: "16px",
+                    borderRadius: "8px",
+                    textDecoration: "none",
+                    color: "var(--ink)",
+                    border: "1px solid var(--line)",
+                    background: "var(--panel)",
+                    transition: "border-color 0.15s"
+                  }}
+                >
+                  <div style={{ width: "8px", height: "8px", borderRadius: "2px", background: room.color }} />
+                  <span style={{ fontSize: "0.88rem", fontWeight: "700" }}>{room.title}</span>
+                </Link>
+              ))}
+            </div>
           </div>
-        </motion.article>
-      </section>
+        </div>
+      </div>
 
       <QuestCompletePopup
         isOpen={showQuestComplete}
