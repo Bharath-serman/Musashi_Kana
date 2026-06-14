@@ -6,9 +6,11 @@ import { useCallback, useEffect, useState } from "react";
 import { BookOpen, Brain, Check, Flame, Trophy, Download, ArrowUpRight, Sparkles } from "lucide-react";
 import { AppFrame } from "../components/app-frame";
 import { useLearning } from "../components/learning-state";
+import { useAuth } from "../components/auth-provider";
 import { motion } from "framer-motion";
 import { getTodayKey, getFormattedDate } from "../lib/daily-tasks";
 import QuestCompletePopup from "../components/quest-complete-popup";
+import BlogDailyPopup from "../components/blog-daily-popup";
 
 export default function DashboardPage() {
   return (
@@ -20,6 +22,7 @@ export default function DashboardPage() {
 
 function Dashboard() {
   const { data, level, progress, progressPercent, setProgress, theme, dailyTasks, getTaskProgress, isAllDailyTasksComplete, showQuestComplete, setShowQuestComplete } = useLearning();
+  const { user } = useAuth();
   const [downloading, setDownloading] = useState(false);
 
   const todayKey = getTodayKey();
@@ -373,6 +376,8 @@ function Dashboard() {
         downloading={downloading}
         level={level}
       />
+
+      {user && <BlogDailyPopup />}
     </>
   );
 }

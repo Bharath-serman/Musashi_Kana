@@ -5,15 +5,17 @@ import { useEffect, useState } from "react";
 import { 
   Plus, Edit2, Trash2, LogOut, Search, Save, X, 
   AlertCircle, CheckCircle, RefreshCw, Layers, 
-  BookOpen, FileText, HelpCircle as QuizIcon
+  BookOpen, FileText, HelpCircle as QuizIcon, Newspaper
 } from "lucide-react";
 import { 
   loginAdmin, logoutAdmin, checkAdminAuth, 
-  fetchSectionData, saveRecord, saveReadingPassage, deleteRecord 
+  fetchSectionData, saveRecord, saveReadingPassage, deleteRecord,
+  fetchBlogPostsForAdmin, saveBlogPost, deleteBlogPost
 } from "./actions";
+import DarkSelect from "./dark-select";
 
 type Level = "N5" | "N4";
-type Section = "flashcards" | "grammar_lessons" | "quiz_questions" | "reading_passages";
+type Section = "flashcards" | "grammar_lessons" | "quiz_questions" | "reading_passages" | "blog_posts";
 type RecordType = any;
 
 export default function AdminPage() {
@@ -58,10 +60,16 @@ export default function AdminPage() {
     async function loadRecords() {
       setLoadingRecords(true);
       try {
-        const data = await fetchSectionData(activeTab);
-        // Filter client-side by level
-        const filtered = (data as RecordType[]).filter((r) => r.level === activeLevel);
-        setRecords(filtered);
+        if (activeTab === "blog_posts") {
+          const data = await fetchBlogPostsForAdmin();
+          const filtered = (data as RecordType[]).filter((r) => r.level === activeLevel || r.level === "All");
+          setRecords(filtered);
+        } else {
+          const data = await fetchSectionData(activeTab);
+          // Filter client-side by level
+          const filtered = (data as RecordType[]).filter((r) => r.level === activeLevel);
+          setRecords(filtered);
+        }
       } catch (err: unknown) {
         const msg = err instanceof Error ? err.message : "An error occurred";
         showToast("error", `Failed to load records: ${msg}`);
@@ -149,7 +157,18 @@ export default function AdminPage() {
     
     let defaultRecord: RecordType;
 
-    if (activeTab === "flashcards") {
+    if (activeTab === "blog_posts") {
+      defaultRecord = {
+        level: activeLevel,
+        category: "blog",
+        title: "",
+        description: "",
+        content: "",
+        url: "",
+        image_url: "",
+        important: false
+      };
+    } else if (activeTab === "flashcards") {
       defaultRecord = {
         level: activeLevel,
         type: "vocab",
@@ -227,7 +246,9 @@ export default function AdminPage() {
     setIsSaving(true);
 
     try {
-      if (activeTab === "reading_passages") {
+      if (activeTab === "blog_posts") {
+        await saveBlogPost(selectedRecord as Record<string, unknown>);
+      } else if (activeTab === "reading_passages") {
         // Validation: Passage questions must not have empty fields
         const invalidQuestions = passageQuestions.some(q => !q.question.trim() || !q.answer.trim());
         if (invalidQuestions) {
@@ -250,15 +271,21 @@ export default function AdminPage() {
         );
       }
 
-      showToast("success", `${activeTab.replace("_", " ")} saved successfully.`);
+      showToast("success", `${activeTab === "blog_posts" ? "blog post" : activeTab.replace("_", " ")} saved successfully.`);
       setShowEditor(false);
       setSelectedRecord(null);
       
       // Re-trigger loadRecords manually by refreshing list
       setLoadingRecords(true);
-      const data = await fetchSectionData(activeTab);
-      const filtered = (data as RecordType[]).filter((r) => r.level === activeLevel);
-      setRecords(filtered);
+      if (activeTab === "blog_posts") {
+        const data = await fetchBlogPostsForAdmin();
+        const filtered = (data as RecordType[]).filter((r) => r.level === activeLevel || r.level === "All");
+        setRecords(filtered);
+      } else {
+        const data = await fetchSectionData(activeTab);
+        const filtered = (data as RecordType[]).filter((r) => r.level === activeLevel);
+        setRecords(filtered);
+      }
       setLoadingRecords(false);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Failed to save record.";
@@ -278,16 +305,26 @@ export default function AdminPage() {
     if (!recordToDelete || !recordToDelete.id) return;
     setIsDeleting(true);
     try {
-      await deleteRecord(activeTab, recordToDelete.id);
+      if (activeTab === "blog_posts") {
+        await deleteBlogPost(recordToDelete.id);
+      } else {
+        await deleteRecord(activeTab, recordToDelete.id);
+      }
       showToast("success", "Record deleted successfully.");
       setShowDeleteConfirm(false);
       setRecordToDelete(null);
       
       // Re-trigger loadRecords manually
       setLoadingRecords(true);
-      const data = await fetchSectionData(activeTab);
-      const filtered = (data as RecordType[]).filter((r) => r.level === activeLevel);
-      setRecords(filtered);
+      if (activeTab === "blog_posts") {
+        const data = await fetchBlogPostsForAdmin();
+        const filtered = (data as RecordType[]).filter((r) => r.level === activeLevel || r.level === "All");
+        setRecords(filtered);
+      } else {
+        const data = await fetchSectionData(activeTab);
+        const filtered = (data as RecordType[]).filter((r) => r.level === activeLevel);
+        setRecords(filtered);
+      }
       setLoadingRecords(false);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Delete failed.";
@@ -327,6 +364,13 @@ export default function AdminPage() {
       return (
         reading.title?.toLowerCase().includes(query) ||
         reading.japanese?.toLowerCase().includes(query)
+      );
+    } else if (activeTab === "blog_posts") {
+      const blog = rec;
+      return (
+        blog.title?.toLowerCase().includes(query) ||
+        blog.description?.toLowerCase().includes(query) ||
+        blog.category?.toLowerCase().includes(query)
       );
     }
     return true;
@@ -490,6 +534,45 @@ export default function AdminPage() {
             border-color: #e88ba1;
             box-shadow: 0 0 0 3px rgba(232, 139, 161, 0.15);
           }
+          .form-group select {
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 14px;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.2s ease;
+            appearance: none;
+            color-scheme: dark;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23b09ba4' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 6l3.5 3.5L11.5 6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            padding-right: 40px;
+          }
+          .form-group select:focus {
+            border-color: #e88ba1;
+            box-shadow: 0 0 0 3px rgba(232, 139, 161, 0.15);
+          }
+          .form-group textarea {
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 14px;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.2s ease;
+            resize: vertical;
+            font-family: inherit;
+          }
+          .form-group textarea:focus {
+            border-color: #e88ba1;
+            box-shadow: 0 0 0 3px rgba(232, 139, 161, 0.15);
+          }
+          .form-group input[type="checkbox"] {
+            accent-color: #e88ba1;
+          }
           .submit-btn {
             background: linear-gradient(135deg, #e88ba1 0%, #c96078 100%);
             color: white;
@@ -590,7 +673,6 @@ export default function AdminPage() {
               >
                 <Layers size={18} />
                 <span>Flashcards</span>
-                <span className="badge">1</span>
               </button>
               <button 
                 onClick={() => setActiveTab("grammar_lessons")} 
@@ -598,7 +680,6 @@ export default function AdminPage() {
               >
                 <BookOpen size={18} />
                 <span>Grammar Lessons</span>
-                <span className="badge">2</span>
               </button>
               <button 
                 onClick={() => setActiveTab("quiz_questions")} 
@@ -606,7 +687,6 @@ export default function AdminPage() {
               >
                 <QuizIcon size={18} />
                 <span>Quiz Questions</span>
-                <span className="badge">3</span>
               </button>
               <button 
                 onClick={() => setActiveTab("reading_passages")} 
@@ -614,7 +694,13 @@ export default function AdminPage() {
               >
                 <FileText size={18} />
                 <span>Reading Passages</span>
-                <span className="badge">4</span>
+              </button>
+              <button 
+                onClick={() => setActiveTab("blog_posts")} 
+                className={activeTab === "blog_posts" ? "active" : ""}
+              >
+                <Newspaper size={18} />
+                <span>Blog Posts</span>
               </button>
             </nav>
           </div>
@@ -704,6 +790,15 @@ export default function AdminPage() {
                           <p className="japanese-preview" lang="ja">{record.japanese}</p>
                         </>
                       )}
+
+                      {activeTab === "blog_posts" && (
+                        <>
+                          <div className="card-pill">{record.category}</div>
+                          <h4>{record.title}</h4>
+                          <p className="meaning-text">{record.description?.slice(0, 100)}{record.description?.length > 100 ? "..." : ""}</p>
+                          {record.important && <div className="card-pill correct" style={{ marginTop: "4px" }}>Featured</div>}
+                        </>
+                      )}
                     </div>
 
                     <div className="card-actions">
@@ -741,35 +836,36 @@ export default function AdminPage() {
             )}
 
             <div className="editor-body">
-              {/* Level Input (General) */}
+              {/* Level Input (General) - hidden for blog_posts which has its own */}
+              {activeTab !== "blog_posts" && (
               <div className="form-group-row">
                 <div className="form-group flex-1">
                   <label>JLPT Level</label>
-                  <select 
-                    value={selectedRecord.level} 
-                    onChange={(e) => setSelectedRecord({ ...selectedRecord, level: e.target.value })}
-                  >
-                    <option value="N5">N5</option>
-                    <option value="N4">N4</option>
-                  </select>
+                  <DarkSelect
+                    value={selectedRecord.level}
+                    onChange={(val) => setSelectedRecord({ ...selectedRecord, level: val })}
+                    options={[{ value: "N5", label: "N5" }, { value: "N4", label: "N4" }]}
+                  />
                 </div>
 
                 {/* Type Input for Flashcards */}
                 {activeTab === "flashcards" && (
                   <div className="form-group flex-1">
                     <label>Deck Type</label>
-                    <select 
-                      value={selectedRecord.type} 
-                      onChange={(e) => setSelectedRecord({ ...selectedRecord, type: e.target.value })}
-                    >
-                      <option value="vocab">vocab</option>
-                      <option value="kanji">kanji</option>
-                      <option value="numbers">numbers</option>
-                      <option value="particles">particles</option>
-                    </select>
+                    <DarkSelect
+                      value={selectedRecord.type}
+                      onChange={(val) => setSelectedRecord({ ...selectedRecord, type: val })}
+                      options={[
+                        { value: "vocab", label: "vocab" },
+                        { value: "kanji", label: "kanji" },
+                        { value: "numbers", label: "numbers" },
+                        { value: "particles", label: "particles" }
+                      ]}
+                    />
                   </div>
                 )}
               </div>
+              )}
 
               {/* Flashcards Fields */}
               {activeTab === "flashcards" && (
@@ -874,17 +970,17 @@ export default function AdminPage() {
                   </div>
                   <div className="form-group">
                     <label>Correct Answer</label>
-                    <select 
-                      value={selectedRecord.answer || ""} 
-                      onChange={(e) => setSelectedRecord({ ...selectedRecord, answer: e.target.value })}
-                      required
-                    >
-                      <option value="">Select the correct choice</option>
-                      {selectedRecord.choice_1 && <option value={selectedRecord.choice_1}>{selectedRecord.choice_1} (Choice 1)</option>}
-                      {selectedRecord.choice_2 && <option value={selectedRecord.choice_2}>{selectedRecord.choice_2} (Choice 2)</option>}
-                      {selectedRecord.choice_3 && <option value={selectedRecord.choice_3}>{selectedRecord.choice_3} (Choice 3)</option>}
-                      {selectedRecord.choice_4 && <option value={selectedRecord.choice_4}>{selectedRecord.choice_4} (Choice 4)</option>}
-                    </select>
+                    <DarkSelect
+                      value={selectedRecord.answer || ""}
+                      onChange={(val) => setSelectedRecord({ ...selectedRecord, answer: val })}
+                      options={[
+                        { value: "", label: "Select the correct choice" },
+                        ...(selectedRecord.choice_1 ? [{ value: selectedRecord.choice_1, label: `${selectedRecord.choice_1} (Choice 1)` }] : []),
+                        ...(selectedRecord.choice_2 ? [{ value: selectedRecord.choice_2, label: `${selectedRecord.choice_2} (Choice 2)` }] : []),
+                        ...(selectedRecord.choice_3 ? [{ value: selectedRecord.choice_3, label: `${selectedRecord.choice_3} (Choice 3)` }] : []),
+                        ...(selectedRecord.choice_4 ? [{ value: selectedRecord.choice_4, label: `${selectedRecord.choice_4} (Choice 4)` }] : [])
+                      ]}
+                    />
                   </div>
                 </>
               )}
@@ -1201,6 +1297,94 @@ export default function AdminPage() {
                   </div>
                 </>
               )}
+
+              {/* Blog Posts Fields */}
+              {activeTab === "blog_posts" && (
+                <>
+                  <div className="form-group-row">
+                    <div className="form-group flex-1">
+                      <label>Level</label>
+                      <DarkSelect
+                        value={selectedRecord.level}
+                        onChange={(val) => setSelectedRecord({ ...selectedRecord, level: val })}
+                        options={[
+                          { value: "N5", label: "N5" },
+                          { value: "N4", label: "N4" },
+                          { value: "All", label: "All Levels" }
+                        ]}
+                      />
+                    </div>
+                    <div className="form-group flex-1">
+                      <label>Category</label>
+                      <DarkSelect
+                        value={selectedRecord.category}
+                        onChange={(val) => setSelectedRecord({ ...selectedRecord, category: val })}
+                        options={[
+                          { value: "blog", label: "Blog" },
+                          { value: "youtube", label: "YouTube" },
+                          { value: "magazine", label: "Magazine" },
+                          { value: "podcast", label: "Podcast" }
+                        ]}
+                      />
+                    </div>
+                  </div>
+                  <div className="form-group">
+                    <label>Title</label>
+                    <input 
+                      type="text" 
+                      value={selectedRecord.title || ""} 
+                      onChange={(e) => setSelectedRecord({ ...selectedRecord, title: e.target.value })}
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Description (short summary)</label>
+                    <textarea 
+                      value={selectedRecord.description || ""} 
+                      onChange={(e) => setSelectedRecord({ ...selectedRecord, description: e.target.value })}
+                      rows={3}
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Full Content (for hosted blog posts, leave empty for external links)</label>
+                    <textarea 
+                      value={selectedRecord.content || ""} 
+                      onChange={(e) => setSelectedRecord({ ...selectedRecord, content: e.target.value })}
+                      rows={8}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>External URL (YouTube, podcast, magazine link)</label>
+                    <input 
+                      type="url" 
+                      value={selectedRecord.url || ""} 
+                      onChange={(e) => setSelectedRecord({ ...selectedRecord, url: e.target.value })}
+                      placeholder="https://..."
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Thumbnail Image URL</label>
+                    <input 
+                      type="url" 
+                      value={selectedRecord.image_url || ""} 
+                      onChange={(e) => setSelectedRecord({ ...selectedRecord, image_url: e.target.value })}
+                      placeholder="https://..."
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label style={{ display: "flex", alignItems: "center", gap: "10px", cursor: "pointer" }}>
+                      <input 
+                        type="checkbox" 
+                        checked={selectedRecord.important || false}
+                        onChange={(e) => setSelectedRecord({ ...selectedRecord, important: e.target.checked })}
+                        style={{ width: "18px", height: "18px" }}
+                      />
+                      Show as important (popup on first visit of the day)
+                    </label>
+                  </div>
+                </>
+              )}
             </div>
 
             <div className="editor-footer">
@@ -1245,6 +1429,7 @@ export default function AdminPage() {
           font-family: Inter, ui-sans-serif, system-ui, sans-serif;
           display: flex;
           flex-direction: column;
+          color-scheme: dark;
         }
 
         /* Toast notification */

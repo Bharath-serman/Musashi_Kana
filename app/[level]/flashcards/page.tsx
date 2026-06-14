@@ -78,7 +78,8 @@ function Flashcards() {
       reviewed: current.reviewed + 1,
       dailyActions: {
         ...current.dailyActions,
-        reviewed: current.dailyActions.reviewed + 1
+        reviewed: current.dailyActions.reviewed + 1,
+        ...(deck === "vocab" ? { vocabLearned: current.dailyActions.vocabLearned + 1 } : {})
       }
     }));
     

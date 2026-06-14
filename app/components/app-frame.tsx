@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import type { MouseEvent, ReactNode } from "react";
-import { BookOpen, Brain, ChevronLeft, ClipboardList, GraduationCap, Languages, Layers, Map, Menu, PenLine, Target, Sun, Moon, User } from "lucide-react";
+import { BookOpen, Brain, ChevronLeft, ClipboardList, GraduationCap, Languages, Layers, Map, Menu, PenLine, Target, Sun, Moon, User, Newspaper } from "lucide-react";
 import { Level } from "../data";
 import { LearningProvider, useLearning } from "./learning-state";
 import CinematicBackground from "./cinematic-background";
@@ -21,6 +21,7 @@ const navItems = [
   { href: "/arena", label: "Arena", icon: Target },
   { href: "/quiz", label: "Quiz", icon: Brain },
   { href: "/reference", label: "Charts", icon: ClipboardList },
+  { href: "/blog", label: "Blog", icon: Newspaper },
   { href: "/profile", label: "Profile", icon: User }
 ];
 
@@ -186,15 +187,19 @@ function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => 
           type="button"
           aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
           style={{
-            background: "var(--sidebar-toggle-bg)",
+            background: "var(--panel)",
             cursor: "pointer",
             display: "grid",
             placeItems: "center",
             width: "32px",
             height: "32px",
-            borderRadius: "50%",
-            border: "1px solid var(--line)"
+            borderRadius: "8px",
+            border: "1px solid var(--line)",
+            color: "var(--ink)",
+            transition: "background 0.15s, border-color 0.15s"
           }}
+          onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--blue)"; }}
+          onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--line)"; }}
         >
           {collapsed ? <Menu size={16} /> : <ChevronLeft size={16} />}
         </button>

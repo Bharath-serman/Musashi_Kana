@@ -9,11 +9,27 @@ export const metadata: Metadata = {
     "A rich JLPT N5 and N4 learning workspace with flashcards, drills, reading, writing, and quizzes."
 };
 
+const themeScript = `
+  (function() {
+    try {
+      var t = localStorage.getItem('musashi-kana-theme');
+      if (t === 'dark' || t === 'light') {
+        document.documentElement.setAttribute('data-theme', t);
+      } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    } catch(e) {}
+  })();
+`;
+
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body>
         <AuthProvider>
           <LearningProvider>
