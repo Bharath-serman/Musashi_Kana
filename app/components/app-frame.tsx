@@ -161,7 +161,7 @@ function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => 
       }}
     >
       <div className="sidebar-header" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <Link className="brand" href="/" style={{ textDecoration: "none", color: "var(--ink)" }}>
+        <Link className="brand" href={`/${level.toLowerCase()}`} style={{ textDecoration: "none", color: "var(--ink)" }}>
           <div className="brand-mark" style={{
             width: "40px",
             height: "40px",
