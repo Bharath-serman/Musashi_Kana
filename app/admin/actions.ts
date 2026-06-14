@@ -242,6 +242,77 @@ export async function saveReadingPassage(
   }
 }
 
+// ─── Blog Posts CRUD ───────────────────────────────────────────────────────────
+
+export async function fetchBlogPostsForAdmin() {
+  const authenticated = await checkAuth();
+  if (!authenticated) throw new Error("Unauthorized");
+
+  const { data, error } = await supabaseService
+    .from("blog_posts")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Error fetching blog posts:", error);
+    throw new Error(error.message);
+  }
+  return data || [];
+}
+
+export async function saveBlogPost(record: Record<string, unknown>) {
+  const authenticated = await checkAuth();
+  if (!authenticated) throw new Error("Unauthorized");
+
+  const payload = { ...record };
+  const id = payload.id;
+  delete payload.id;
+  delete payload.created_at;
+
+  if (id) {
+    const { data, error } = await supabaseService
+      .from("blog_posts")
+      .update(payload)
+      .eq("id", id)
+      .select();
+
+    if (error) {
+      console.error("Error updating blog post:", error);
+      throw new Error(error.message);
+    }
+    return { success: true, data: data?.[0] };
+  } else {
+    const { data, error } = await supabaseService
+      .from("blog_posts")
+      .insert([payload])
+      .select();
+
+    if (error) {
+      console.error("Error inserting blog post:", error);
+      throw new Error(error.message);
+    }
+    return { success: true, data: data?.[0] };
+  }
+}
+
+export async function deleteBlogPost(id: string) {
+  const authenticated = await checkAuth();
+  if (!authenticated) throw new Error("Unauthorized");
+
+  const { error } = await supabaseService
+    .from("blog_posts")
+    .delete()
+    .eq("id", id);
+
+  if (error) {
+    console.error("Error deleting blog post:", error);
+    throw new Error(error.message);
+  }
+  return { success: true };
+}
+
+// ─── Existing CRUD ────────────────────────────────────────────────────────────
+
 export async function deleteRecord(
   section: "flashcards" | "grammar_lessons" | "quiz_questions" | "reading_passages",
   id: string

@@ -108,7 +108,7 @@ function Writing() {
     ctx.font = "360px 'Yu Gothic', 'Meiryo', sans-serif";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillStyle = "rgba(20, 27, 40, 0.08)";
+    ctx.fillStyle = "rgba(41, 62, 102, 0.57)";
     ctx.fillText(symbol, canvas.width / 2, canvas.height / 2 + 10);
     ctx.restore();
   }, []);
@@ -159,7 +159,7 @@ function Writing() {
     ctx.lineWidth = 17;
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
-    ctx.strokeStyle = "#172033";
+    ctx.strokeStyle = "#fffb002a";  //Writing Stroke Color.
     ctx.stroke();
   }
 
@@ -181,12 +181,16 @@ function Writing() {
       nextCompleted.add(writingSymbol);
       setCompletedSymbols(nextCompleted);
       if (!alreadyCompleted) {
+        const isHiragana = hiragana.includes(writingSymbol);
+        const isKatakana = katakana.includes(writingSymbol);
         setProgress((current) => ({
           ...current,
           writing: current.writing + 1,
           dailyActions: {
             ...current.dailyActions,
-            writing: current.dailyActions.writing + 1
+            writing: current.dailyActions.writing + 1,
+            ...(isHiragana ? { hiraganaLearned: current.dailyActions.hiraganaLearned + 1 } : {}),
+            ...(isKatakana ? { katakanaLearned: current.dailyActions.katakanaLearned + 1 } : {})
           }
         }));
       }
@@ -215,7 +219,7 @@ function Writing() {
     <>
       <PageHeader
         eyebrow="Output"
-        title={`${level} writing studio`}
+        title={`${level} writing practice`}  //Title of the page.
         text={level === "N5"
           ? "Practice Hiragana, Katakana, and your N5 kanji set. Draw over the guide, check accuracy, and complete each slot once your shape matches well enough."
           : "Practice the N4 kanji set here. Draw over the guide, check accuracy, and complete each slot once your shape matches well enough."}
