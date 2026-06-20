@@ -24,7 +24,7 @@ export default function ReferencePage() {
         text="Study the basic writing systems and characters for N5 and N4. Click any character to hear its pronunciation."
       />
 
-      <div style={{ display: "flex", gap: "10px", marginBottom: "30px" }}>
+      <div style={{ display: "flex", gap: "10px", marginBottom: "30px", flexWrap: "wrap" }}>
         {["hiragana", "katakana", "kanji"].map((tab) => (
           <button
             key={tab}
@@ -58,7 +58,7 @@ export default function ReferencePage() {
             style={{ background: "var(--card-glass-bg)", backdropFilter: "blur(10px)", padding: "30px", borderRadius: "16px", border: "1px solid var(--line)" }}
           >
             <h2 style={{ marginBottom: "20px", fontWeight: "900" }}>Hiragana Chart</h2>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "12px" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(80px, 1fr))", gap: "12px" }}>
               {hiragana.map((item, index) => (
                 <motion.div
                   key={index}
@@ -93,7 +93,7 @@ export default function ReferencePage() {
             style={{ background: "var(--card-glass-bg)", backdropFilter: "blur(10px)", padding: "30px", borderRadius: "16px", border: "1px solid var(--line)" }}
           >
             <h2 style={{ marginBottom: "20px", fontWeight: "900" }}>Katakana Chart</h2>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "12px" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(80px, 1fr))", gap: "12px" }}>
               {katakana.map((item, index) => (
                 <motion.div
                   key={index}

@@ -213,7 +213,7 @@ function ProfileDashboard() {
         text="Manage your account details and personalize your experience."
       />
 
-      <div style={{ display: "grid", gap: "30px", gridTemplateColumns: "1fr 1fr", alignItems: "start" }}>
+      <div style={{ display: "grid", gap: "30px", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 380px), 1fr))", alignItems: "start" }}>
         
         {/* Profile Settings Card */}
         <motion.article 
@@ -303,7 +303,7 @@ function ProfileDashboard() {
               <label style={{ display: "block", fontSize: "0.85rem", fontWeight: "bold", marginBottom: "8px", color: "var(--muted)" }}>
                 Or pick a preset avatar
               </label>
-              <div style={{ display: "flex", gap: "10px" }}>
+              <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
                 {presetAvatars.map((avatar) => (
                   <button 
                     type="button" 

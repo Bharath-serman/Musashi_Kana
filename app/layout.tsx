@@ -4,7 +4,7 @@ import { LearningProvider } from "./components/learning-state";
 import { AuthProvider } from "./components/auth-provider";
 
 export const metadata: Metadata = {
-  title: "Musashi_Kana JLPT Studio",
+  title: "Musashi_Kana",
   description:
     "A rich JLPT N5 and N4 learning workspace with flashcards, drills, reading, writing, and quizzes."
 };

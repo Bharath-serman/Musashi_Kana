@@ -134,8 +134,8 @@ function Dashboard() {
       {/* Hero */}
       <div style={{ marginBottom: "48px" }}>
         <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: "24px", flexWrap: "wrap" }}>
-          <div>
-            <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "8px" }}>
+          <div style={{ minWidth: 0, flex: "1 1 300px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "8px", flexWrap: "wrap" }}>
               <span style={{ fontSize: "0.7rem", fontWeight: "800", textTransform: "uppercase", letterSpacing: "0.12em", color: "var(--blue)" }}>{data.theme} path</span>
               <span style={{ fontSize: "0.7rem", color: "var(--muted)" }}>|</span>
               <span style={{ fontSize: "0.7rem", color: "var(--muted)" }}>{formattedDate}</span>
@@ -189,7 +189,7 @@ function Dashboard() {
       </div>
 
       {/* Stats Row */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "2px", marginBottom: "32px", background: "var(--line)", borderRadius: "12px", overflow: "hidden" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: "2px", marginBottom: "32px", background: "var(--line)", borderRadius: "12px", overflow: "hidden" }}>
         {[
           { icon: <BookOpen size={18} />, label: "Words", value: data.stats.words.toLocaleString(), accent: false },
           { icon: <Brain size={18} />, label: "Kanji", value: data.stats.kanji.toString(), accent: false },
@@ -205,7 +205,7 @@ function Dashboard() {
       </div>
 
       {/* Main Grid */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "24px" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 380px), 1fr))", gap: "24px" }}>
 
         {/* Left Column - Quest */}
         <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>

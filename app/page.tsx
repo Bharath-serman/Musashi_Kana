@@ -74,7 +74,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div style={{ position: "relative", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", background: "var(--paper)" }}>
+    <div style={{ position: "relative", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", background: "var(--paper)", padding: "20px" }}>
       <CinematicBackground />
 
       <motion.div
@@ -84,7 +84,7 @@ export default function LoginPage() {
         style={{
           width: "100%",
           maxWidth: "420px",
-          padding: "40px",
+          padding: "clamp(24px, 5vw, 40px)",
           background: "var(--card-glass-bg)",
           backdropFilter: "blur(20px)",
           borderRadius: "24px",

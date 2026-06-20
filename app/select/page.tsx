@@ -60,8 +60,8 @@ export default function LevelSelectPage() {
         animate={{ opacity: 1, y: 0 }}
         style={{ textAlign: "center", marginBottom: "60px" }}
       >
-        <h1 style={{ fontSize: "3rem", fontWeight: "900", color: "var(--ink)", marginBottom: "12px" }}>Choose your path</h1>
-        <p style={{ fontSize: "1.2rem", color: "var(--muted)" }}>Which JLPT level are you targeting today?</p>
+        <h1 style={{ fontSize: "clamp(2rem, 6vw, 3rem)", fontWeight: "900", color: "var(--ink)", marginBottom: "12px" }}>Choose your path</h1>
+        <p style={{ fontSize: "clamp(1rem, 3vw, 1.2rem)", color: "var(--muted)" }}>Which JLPT level are you targeting today?</p>
       </motion.div>
 
       <div style={{ display: "flex", gap: "40px", flexWrap: "wrap", justifyContent: "center", padding: "0 20px" }}>
@@ -72,8 +72,9 @@ export default function LevelSelectPage() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.1 }}
           style={{
-            width: "300px",
-            height: "400px",
+            width: "100%",
+            maxWidth: "300px",
+            minHeight: "350px",
             borderRadius: "24px",
             border: "1px solid var(--card-glass-border)",
             background: "var(--card-glass-bg)",
@@ -92,9 +93,9 @@ export default function LevelSelectPage() {
           onMouseLeave={(e) => e.currentTarget.style.transform = "none"}
         >
           <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "8px", background: "#4dabf7" }} />
-          <h2 style={{ fontSize: "5rem", fontWeight: "900", color: "#4dabf7", margin: 0 }}>N5</h2>
+          <h2 style={{ fontSize: "clamp(3rem, 10vw, 5rem)", fontWeight: "900", color: "#4dabf7", margin: 0 }}>N5</h2>
           <h3 style={{ fontSize: "1.5rem", color: "var(--ink)", margin: "10px 0" }}>Beginner</h3>
-          <p style={{ color: "var(--muted)", textAlign: "center", padding: "0 30px" }}>Master the fundamentals: basic kanji, essential grammar, and everyday vocabulary.</p>
+          <p style={{ color: "var(--muted)", textAlign: "center", padding: "0 30px", fontSize: "clamp(0.85rem, 2vw, 1rem)" }}>Master the fundamentals: basic kanji, essential grammar, and everyday vocabulary.</p>
         </motion.button>
 
         {/* N4 Path */}
@@ -104,8 +105,9 @@ export default function LevelSelectPage() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.2 }}
           style={{
-            width: "300px",
-            height: "400px",
+            width: "100%",
+            maxWidth: "300px",
+            minHeight: "350px",
             borderRadius: "24px",
             border: "1px solid var(--card-glass-border)",
             background: "var(--card-glass-bg)",
@@ -124,9 +126,9 @@ export default function LevelSelectPage() {
           onMouseLeave={(e) => e.currentTarget.style.transform = "none"}
         >
           <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "8px", background: "#ff6b6b" }} />
-          <h2 style={{ fontSize: "5rem", fontWeight: "900", color: "#ff6b6b", margin: 0 }}>N4</h2>
+          <h2 style={{ fontSize: "clamp(3rem, 10vw, 5rem)", fontWeight: "900", color: "#ff6b6b", margin: 0 }}>N4</h2>
           <h3 style={{ fontSize: "1.5rem", color: "var(--ink)", margin: "10px 0" }}>Elementary</h3>
-          <p style={{ color: "var(--muted)", textAlign: "center", padding: "0 30px" }}>Expand your horizons: complex sentences, more kanji, and natural conversations.</p>
+          <p style={{ color: "var(--muted)", textAlign: "center", padding: "0 30px", fontSize: "clamp(0.85rem, 2vw, 1rem)" }}>Expand your horizons: complex sentences, more kanji, and natural conversations.</p>
         </motion.button>
       </div>
     </div>
