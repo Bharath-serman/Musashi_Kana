@@ -86,7 +86,7 @@ function BlogContent({ params }: { params: Promise<{ level: string }> }) {
       </div>
 
       {/* Category Tabs */}
-      <div style={{ display: "flex", gap: "4px", marginBottom: "32px", padding: "4px", borderRadius: "10px", background: "var(--panel)", border: "1px solid var(--line)", width: "fit-content" }}>
+      <div style={{ display: "flex", gap: "4px", marginBottom: "32px", padding: "4px", borderRadius: "10px", background: "var(--panel)", border: "1px solid var(--line)", width: "fit-content", maxWidth: "100%", overflowX: "auto" }}>
         {CATEGORIES.map((cat) => {
           const Icon = cat.icon;
           const isActive = activeCategory === cat.id;

@@ -2145,6 +2145,254 @@ export default function AdminPage() {
           from { opacity: 0; }
           to { opacity: 1; }
         }
+
+        /* Responsive: Tablet */
+        @media (max-width: 900px) {
+          .admin-header {
+            padding: 16px 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+          }
+          .header-brand h1 {
+            font-size: 1.2rem;
+          }
+          .header-brand p {
+            font-size: 0.8rem;
+          }
+          .admin-layout {
+            grid-template-columns: 1fr;
+            padding: 20px;
+            gap: 20px;
+          }
+          .admin-sidebar {
+            flex-direction: row;
+            gap: 20px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+          }
+          .sidebar-group {
+            min-width: max-content;
+          }
+          .sidebar-group h3 {
+            white-space: nowrap;
+          }
+          .level-picker {
+            min-width: 180px;
+          }
+          .section-nav {
+            flex-direction: row;
+            gap: 4px;
+          }
+          .section-nav button {
+            white-space: nowrap;
+            padding: 10px 14px;
+            font-size: 0.85rem;
+          }
+          .section-nav button.active::before {
+            display: none;
+          }
+          .content-actions {
+            flex-wrap: wrap;
+          }
+          .search-wrap {
+            max-width: none;
+            flex: 1 1 200px;
+          }
+          .add-btn {
+            white-space: nowrap;
+          }
+          .records-list {
+            max-height: none;
+          }
+          .record-card {
+            padding: 14px;
+          }
+          .quiz-options-preview {
+            grid-template-columns: 1fr;
+          }
+          .editor-container {
+            max-width: 100%;
+            margin: 10px;
+            max-height: 95vh;
+          }
+          .form-group-row {
+            flex-direction: column;
+            gap: 12px;
+          }
+          .sub-row {
+            flex-direction: column;
+          }
+          .sub-row-pair {
+            flex-direction: column;
+            align-items: stretch;
+          }
+          .setup-banner {
+            margin: 16px 20px 0;
+            flex-direction: column;
+            gap: 10px;
+          }
+        }
+
+        /* Responsive: Mobile */
+        @media (max-width: 600px) {
+          .admin-header {
+            padding: 14px 14px;
+          }
+          .header-brand {
+            gap: 10px;
+          }
+          .avatar-square {
+            width: 36px;
+            height: 36px;
+            font-size: 1.1rem;
+          }
+          .header-brand h1 {
+            font-size: 1.05rem;
+          }
+          .header-brand p {
+            display: none;
+          }
+          .logout-btn span {
+            display: none;
+          }
+          .logout-btn {
+            padding: 8px;
+          }
+          .admin-layout {
+            padding: 14px;
+            gap: 14px;
+          }
+          .admin-sidebar {
+            flex-direction: column;
+            gap: 16px;
+          }
+          .sidebar-group h3 {
+            font-size: 0.7rem;
+          }
+          .level-picker {
+            min-width: auto;
+          }
+          .level-picker button {
+            font-size: 0.8rem;
+            padding: 6px 0;
+          }
+          .section-nav {
+            flex-wrap: wrap;
+          }
+          .section-nav button {
+            padding: 8px 12px;
+            font-size: 0.8rem;
+          }
+          .section-nav button span {
+            display: none;
+          }
+          .section-nav button svg {
+            margin: 0;
+          }
+          .content-actions {
+            flex-direction: column;
+            gap: 10px;
+          }
+          .search-wrap {
+            max-width: none;
+          }
+          .add-btn {
+            width: 100%;
+            justify-content: center;
+          }
+          .record-card {
+            flex-direction: column;
+            gap: 12px;
+          }
+          .card-actions {
+            margin-left: 0;
+            justify-content: flex-end;
+          }
+          .card-details h4 {
+            font-size: 1rem;
+          }
+          .editor-overlay {
+            padding: 0;
+          }
+          .editor-container {
+            border-radius: 16px 16px 0 0;
+            max-height: 98vh;
+            margin: 0;
+          }
+          .editor-header {
+            padding: 16px;
+          }
+          .editor-header h2 {
+            font-size: 1.1rem;
+          }
+          .editor-body {
+            padding: 16px;
+            gap: 12px;
+          }
+          .editor-footer {
+            padding: 14px 16px;
+            flex-direction: column;
+            gap: 8px;
+          }
+          .editor-footer button {
+            width: 100%;
+            justify-content: center;
+          }
+          .subsection-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+          }
+          .subsection-header span {
+            font-size: 0.8rem;
+          }
+          .delete-modal {
+            margin: 14px;
+            padding: 24px;
+            border-radius: 16px;
+          }
+          .delete-modal h2 {
+            font-size: 1.2rem;
+          }
+          .delete-modal-actions {
+            flex-direction: column;
+          }
+          .toast-notification {
+            left: 14px;
+            right: 14px;
+            top: 14px;
+            padding: 12px 16px;
+            font-size: 0.85rem;
+          }
+          .banner-content p {
+            font-size: 0.8rem;
+          }
+          .records-grid-container {
+            min-height: 300px;
+          }
+          .loading-state, .empty-state {
+            padding: 24px;
+          }
+        }
+
+        /* Responsive: Very small screens */
+        @media (max-width: 380px) {
+          .admin-header {
+            padding: 10px 10px;
+          }
+          .admin-layout {
+            padding: 10px;
+          }
+          .level-picker {
+            grid-template-columns: 1fr;
+          }
+          .section-nav {
+            gap: 2px;
+          }
+          .section-nav button {
+            padding: 8px 10px;
+          }
+        }
       `}</style>
     </div>
   );

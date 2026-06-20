@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import type { MouseEvent, ReactNode } from "react";
-import { BookOpen, Brain, ChevronLeft, ClipboardList, GraduationCap, Languages, Layers, Map, Menu, PenLine, Target, Sun, Moon, User, Newspaper } from "lucide-react";
+import { BookOpen, Brain, ChevronLeft, ClipboardList, GraduationCap, Languages, Layers, Map, Menu, PenLine, Target, Sun, Moon, User, Newspaper, X } from "lucide-react";
 import { Level } from "../data";
 import { LearningProvider, useLearning } from "./learning-state";
 import CinematicBackground from "./cinematic-background";
@@ -25,8 +25,22 @@ const navItems = [
   { href: "/profile", label: "Profile", icon: User }
 ];
 
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    function check() {
+      setIsMobile(window.innerWidth <= 1120);
+    }
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+  return isMobile;
+}
+
 export function AppFrame({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+  const isMobile = useIsMobile();
   const [isNavigating, setIsNavigating] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
     if (typeof window !== "undefined") {
@@ -34,6 +48,7 @@ export function AppFrame({ children }: { children: ReactNode }) {
     }
     return false;
   });
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Load persistence on mount
   useEffect(() => {
@@ -50,7 +65,12 @@ export function AppFrame({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     setIsNavigating(false);
+    setMobileMenuOpen(false);
   }, [pathname]);
+
+  const toggleMobileMenu = useCallback(() => {
+    setMobileMenuOpen((prev) => !prev);
+  }, []);
 
   function handleNavigation(event: MouseEvent<HTMLElement>) {
     if (
@@ -81,6 +101,184 @@ export function AppFrame({ children }: { children: ReactNode }) {
     }
   }
 
+  // Mobile layout
+  if (isMobile) {
+    return (
+      <div style={{ position: "relative", minHeight: "100vh" }}>
+        <CinematicBackground />
+
+        {/* Mobile top bar */}
+        <div style={{
+          position: "sticky",
+          top: 0,
+          zIndex: 60,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "12px 16px",
+          background: "var(--sidebar-glass)",
+          backdropFilter: "blur(18px)",
+          borderBottom: "1px solid var(--line)"
+        }}>
+          <Link href={`/${pathname.split("/")[1] || "n5"}`} style={{ textDecoration: "none", color: "var(--ink)", display: "flex", alignItems: "center", gap: "10px" }}>
+            <div style={{
+              width: "34px",
+              height: "34px",
+              background: "var(--blue-dark)",
+              color: "white",
+              display: "grid",
+              placeItems: "center",
+              borderRadius: "8px",
+              fontWeight: "bold",
+              fontSize: "1.1rem"
+            }}>学</div>
+            <strong style={{ fontSize: "1rem" }}>Musashi_Kana</strong>
+          </Link>
+          <button
+            onClick={toggleMobileMenu}
+            aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+            style={{
+              display: "grid",
+              placeItems: "center",
+              width: "38px",
+              height: "38px",
+              borderRadius: "8px",
+              border: "1px solid var(--line)",
+              background: "var(--paper)",
+              color: "var(--ink)",
+              cursor: "pointer"
+            }}
+          >
+            {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
+          </button>
+        </div>
+
+        {/* Mobile overlay menu */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              onClick={() => setMobileMenuOpen(false)}
+              style={{
+                position: "fixed",
+                inset: 0,
+                top: "62px",
+                zIndex: 55,
+                background: "rgba(0,0,0,0.4)",
+                backdropFilter: "blur(4px)"
+              }}
+            />
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.nav
+              initial={{ y: -10, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: -10, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              style={{
+                position: "fixed",
+                top: "62px",
+                left: 0,
+                right: 0,
+                zIndex: 56,
+                background: "var(--sidebar-glass)",
+                backdropFilter: "blur(18px)",
+                borderBottom: "1px solid var(--line)",
+                padding: "12px",
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))",
+                gap: "6px",
+                maxHeight: "calc(100vh - 62px)",
+                overflowY: "auto"
+              }}
+              onClickCapture={handleNavigation}
+            >
+              {navItems.map((item) => {
+                const Icon = item.icon;
+                const href = item.href === "/" ? `/${pathname.split("/")[1] || "n5"}` : `/${pathname.split("/")[1] || "n5"}${item.href}`;
+                const active = pathname === href;
+                return (
+                  <Link
+                    href={href}
+                    key={item.href}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "10px",
+                      padding: "12px",
+                      borderRadius: "8px",
+                      textDecoration: "none",
+                      color: active ? "var(--sidebar-active-color)" : "var(--ink)",
+                      background: active ? "var(--sidebar-active-bg)" : "transparent",
+                      fontWeight: active ? "700" : "500",
+                      fontSize: "0.9rem"
+                    }}
+                  >
+                    <Icon size={16} />
+                    <span>{item.label}</span>
+                  </Link>
+                );
+              })}
+              <Link
+                href="/select"
+                style={{
+                  gridColumn: "1 / -1",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "8px",
+                  padding: "10px",
+                  borderRadius: "8px",
+                  border: "1px solid var(--line)",
+                  background: "var(--paper)",
+                  color: "var(--ink)",
+                  textDecoration: "none",
+                  fontWeight: "bold",
+                  fontSize: "0.85rem",
+                  marginTop: "4px"
+                }}
+              >
+                Switch Path
+              </Link>
+            </motion.nav>
+          )}
+        </AnimatePresence>
+
+        <main onClickCapture={handleNavigation}>
+          {isNavigating && <NavigationLoader />}
+          <section
+            className="content"
+            style={{
+              padding: "20px 14px 60px",
+              background: "var(--glass-bg)",
+              backdropFilter: "blur(5px)",
+              minHeight: "calc(100vh - 62px)"
+            }}
+          >
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={pathname}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.4, ease: "easeOut" }}
+              >
+                {children}
+              </motion.div>
+            </AnimatePresence>
+          </section>
+        </main>
+      </div>
+    );
+  }
+
+  // Desktop layout
   return (
     <div style={{ position: "relative", minHeight: "100vh" }}>
       <CinematicBackground />
@@ -88,12 +286,6 @@ export function AppFrame({ children }: { children: ReactNode }) {
       <main
         className={`app-shell ${isSidebarCollapsed ? "sidebar-collapsed" : ""}`}
         onClickCapture={handleNavigation}
-        style={{
-          display: "grid",
-          gridTemplateColumns: isSidebarCollapsed ? "80px minmax(0, 1fr)" : "280px minmax(0, 1fr)",
-          minHeight: "100vh",
-          transition: "grid-template-columns 0.3s ease"
-        }}
       >
         {isNavigating && <NavigationLoader />}
 
@@ -101,12 +293,6 @@ export function AppFrame({ children }: { children: ReactNode }) {
 
         <section
           className="content"
-          style={{
-            padding: "40px clamp(20px, 5vw, 60px)",
-            background: "var(--glass-bg)",
-            backdropFilter: "blur(5px)",
-            minHeight: "100vh"
-          }}
         >
           <AnimatePresence mode="wait">
             <motion.div
@@ -145,21 +331,6 @@ function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => 
     <aside
       className={`sidebar ${collapsed ? "collapsed" : ""}`}
       aria-label="Study navigation"
-      style={{
-        position: "sticky",
-        top: 0,
-        height: "100vh",
-        background: "var(--sidebar-glass)",
-        backdropFilter: "blur(20px)",
-        borderRight: "1px solid var(--sidebar-border)",
-        boxShadow: "10px 0 30px rgba(0,0,0,0.03)",
-        display: "flex",
-        flexDirection: "column",
-        gap: "24px",
-        padding: "24px",
-        transition: "width 0.3s ease, padding 0.3s ease, background 0.3s ease, border-color 0.3s ease",
-        zIndex: 100
-      }}
     >
       <div className="sidebar-header" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <Link className="brand" href={`/${level.toLowerCase()}`} style={{ textDecoration: "none", color: "var(--ink)" }}>
@@ -238,7 +409,7 @@ function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => 
       </nav>
 
       {!collapsed && (
-        <div style={{ marginTop: "auto", display: "grid", gap: "12px" }}>
+        <div className="sidebar-bottom-section" style={{ marginTop: "auto", display: "grid", gap: "12px" }}>
           <div className="level-card" style={{ padding: "16px", border: "1px solid var(--line)", borderRadius: "8px", background: "var(--panel)" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <span style={{ fontSize: "0.75rem", textTransform: "uppercase", color: "var(--muted)", letterSpacing: "0.05em" }}>Active Path</span>
@@ -275,7 +446,7 @@ function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => 
       )}
 
       {collapsed && (
-        <div style={{ marginTop: "auto", display: "flex", flexDirection: "column", gap: "12px", alignItems: "center", margin: "auto auto 20px" }}>
+        <div className="sidebar-bottom-section" style={{ marginTop: "auto", display: "flex", flexDirection: "column", gap: "12px", alignItems: "center", margin: "auto auto 20px" }}>
           <div className="sidebar-collapsed-level" title={`Current Level: ${level}`} style={{
             textAlign: "center",
             fontWeight: "bold",
@@ -312,17 +483,19 @@ export function PageHeader({
       display: "flex",
       justifyContent: "space-between",
       alignItems: "flex-end",
+      gap: "16px",
       background: "transparent",
       border: "none",
       padding: 0,
-      boxShadow: "none"
+      boxShadow: "none",
+      flexWrap: "wrap"
     }}>
-      <div>
+      <div style={{ minWidth: 0, flex: "1 1 280px" }}>
         <span style={{ fontSize: "0.75rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--blue)", fontWeight: "900" }}>{eyebrow}</span>
-        <h1 style={{ fontSize: "clamp(2.5rem, 5vw, 4rem)", fontWeight: "900", lineHeight: "1", marginTop: "8px", color: "var(--ink)" }}>{title}</h1>
-        <p style={{ color: "var(--muted)", marginTop: "12px", fontSize: "1.1rem" }}>{text}</p>
+        <h1 style={{ fontSize: "clamp(2rem, 5vw, 4rem)", fontWeight: "900", lineHeight: "1", marginTop: "8px", color: "var(--ink)" }}>{title}</h1>
+        <p style={{ color: "var(--muted)", marginTop: "12px", fontSize: "clamp(0.9rem, 2vw, 1.1rem)" }}>{text}</p>
       </div>
-      {action}
+      {action && <div style={{ flexShrink: 0 }}>{action}</div>}
     </section>
   );
 }
@@ -334,13 +507,13 @@ export function Metric({ icon, label, value }: { icon: ReactNode; label: string;
       backdropFilter: "blur(10px)",
       border: "1px solid var(--card-glass-border)",
       borderRadius: "12px",
-      padding: "20px",
+      padding: "clamp(14px, 3vw, 20px)",
       display: "grid",
       gap: "8px"
     }}>
       <div style={{ color: "var(--blue)" }}>{icon}</div>
       <span style={{ color: "var(--muted)", fontSize: "0.9rem" }}>{label}</span>
-      <strong style={{ fontSize: "1.8rem", fontWeight: "900" }}>{value}</strong>
+      <strong style={{ fontSize: "clamp(1.4rem, 3vw, 1.8rem)", fontWeight: "900" }}>{value}</strong>
     </article>
   );
 }
