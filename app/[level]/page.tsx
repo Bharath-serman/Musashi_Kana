@@ -126,7 +126,7 @@ function Dashboard() {
     } finally {
       setDownloading(false);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [level, todayKey, theme, data.theme, setProgress]);
 
   return (
@@ -194,7 +194,7 @@ function Dashboard() {
           { icon: <BookOpen size={18} />, label: "Words", value: data.stats.words.toLocaleString(), accent: false },
           { icon: <Brain size={18} />, label: "Kanji", value: data.stats.kanji.toString(), accent: false },
           { icon: <Sparkles size={18} />, label: "Grammar", value: data.stats.grammar.toString(), accent: false },
-          { icon: <Flame size={18} />, label: "Streak", value: `${progress.streak}d`, accent: true }
+          { icon: <Flame size={18} />, label: "A Day", value: `02Hrs`, accent: true }
         ].map((stat, i) => (
           <div key={i} style={{ padding: "20px 24px", background: "var(--paper)", display: "flex", flexDirection: "column", gap: "8px" }}>
             <div style={{ color: stat.accent ? "var(--blue)" : "var(--muted)" }}>{stat.icon}</div>
