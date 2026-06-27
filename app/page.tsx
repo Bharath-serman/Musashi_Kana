@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { signInWithPopup, GoogleAuthProvider, GithubAuthProvider, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
+import { signInWithPopup, GoogleAuthProvider, GithubAuthProvider, signInWithEmailAndPassword, createUserWithEmailAndPassword, fetchSignInMethodsForEmail, linkWithCredential, onAuthStateChanged } from "firebase/auth";
 import { auth } from "./lib/firebase";
 import { motion } from "framer-motion";
 import { LogIn, UserPlus, Github, Mail } from "lucide-react";
@@ -15,6 +15,18 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        router.push("/select");
+      } else {
+        setInitialLoading(false);
+      }
+    });
+    return () => unsubscribe();
+  }, [router]);
 
   useEffect(() => {
     const prev = document.documentElement.getAttribute("data-theme");
@@ -44,11 +56,43 @@ export default function LoginPage() {
   const handleGithubSignIn = async () => {
     try {
       setLoading(true);
+      setError(null);
       const provider = new GithubAuthProvider();
       await signInWithPopup(auth, provider);
       router.push("/select");
     } catch (err: any) {
-      setError(err.message);
+      if (err.code === "auth/account-exists-with-different-credential") {
+        const email = err.customData?.email;
+        const pendingCredential = GithubAuthProvider.credentialFromError(err);
+        try {
+          const methods = await fetchSignInMethodsForEmail(auth, email);
+          const method = methods[0];
+          if (method === "google.com") {
+            const googleProvider = new GoogleAuthProvider();
+            const result = await signInWithPopup(auth, googleProvider);
+            if (pendingCredential) {
+              await linkWithCredential(result.user, pendingCredential);
+            }
+          } else if (method === "password") {
+            const pw = prompt(`This email is registered with email/password. Enter your password to link your GitHub account:`);
+            if (pw) {
+              const result = await signInWithEmailAndPassword(auth, email, pw);
+              if (pendingCredential) {
+                await linkWithCredential(result.user, pendingCredential);
+              }
+            } else {
+              setError("Linking cancelled.");
+              setLoading(false);
+              return;
+            }
+          }
+          router.push("/select");
+        } catch (linkErr: any) {
+          setError(linkErr.message);
+        }
+      } else {
+        setError(err.message);
+      }
     } finally {
       setLoading(false);
     }
@@ -72,6 +116,8 @@ export default function LoginPage() {
       setLoading(false);
     }
   };
+
+  if (initialLoading) return null;
 
   return (
     <div style={{ position: "relative", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", background: "var(--paper)", padding: "20px" }}>

@@ -243,7 +243,7 @@ function Arena() {
       </div>
 
       <div className="arena-footer">
-        <Link href="/" className="footer-btn">
+        <Link href="/${level}/" className="footer-btn">  //Returns to dashboard.
           <Home size={20} />
           <span>HOME</span>
         </Link>
