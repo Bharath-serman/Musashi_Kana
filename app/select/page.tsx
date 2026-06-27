@@ -32,7 +32,7 @@ export default function LevelSelectPage() {
   if (loading || !user) return null;
 
   return (
-    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: "var(--paper)" }}>
+    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: "var(--paper)", padding: "70px 20px 20px" }}>
       <button 
         onClick={() => auth.signOut()}
         style={{

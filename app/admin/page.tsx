@@ -2260,11 +2260,11 @@ export default function AdminPage() {
           }
           .admin-layout {
             padding: 14px;
-            gap: 14px;
+            gap: 0;
           }
           .admin-sidebar {
             flex-direction: column;
-            gap: 16px;
+            gap: 10px;
           }
           .sidebar-group h3 {
             font-size: 0.7rem;
@@ -2277,11 +2277,16 @@ export default function AdminPage() {
             padding: 6px 0;
           }
           .section-nav {
+            flex-direction: row;
             flex-wrap: wrap;
+            gap: 6px;
+            justify-content: center;
           }
           .section-nav button {
-            padding: 8px 12px;
+            width: auto;
+            padding: 10px 14px;
             font-size: 0.8rem;
+            border-radius: 10px;
           }
           .section-nav button span {
             display: none;
@@ -2290,15 +2295,22 @@ export default function AdminPage() {
             margin: 0;
           }
           .content-actions {
-            flex-direction: column;
+            flex-direction: row;
             gap: 10px;
+            align-items: stretch;
+          }
+          .admin-content {
+            gap: 12px;
           }
           .search-wrap {
             max-width: none;
+            flex: 1;
           }
           .add-btn {
-            width: 100%;
+            width: auto;
+            white-space: nowrap;
             justify-content: center;
+            padding: 12px 16px;
           }
           .record-card {
             flex-direction: column;
@@ -2368,7 +2380,8 @@ export default function AdminPage() {
             font-size: 0.8rem;
           }
           .records-grid-container {
-            min-height: 300px;
+            min-height: auto;
+            flex: none;
           }
           .loading-state, .empty-state {
             padding: 24px;

@@ -56,6 +56,24 @@ const getKanjiRomaji = (symbol: string): string => {
   return symbol;
 };
 
+const getKanjiInfo = (symbol: string): { reading: string; meaning: string } | null => {
+  const kanjiItem = [...course.N5.kanji, ...course.N4.kanji].find(item => item.front === symbol);
+  if (kanjiItem) {
+    const readingParts = kanjiItem.reading.split("・").map(p => p.split("/")[0].trim());
+    const reading = readingParts.join(" / ");
+    return { reading, meaning: kanjiItem.meaning };
+  }
+  return null;
+};
+
+const getSymbolInfo = (symbol: string): string => {
+  if (hiraganaRomaji[symbol]) return `${symbol} — ${hiraganaRomaji[symbol]}`;
+  if (katakanaRomaji[symbol]) return `${symbol} — ${katakanaRomaji[symbol]}`;
+  const kanji = getKanjiInfo(symbol);
+  if (kanji) return `${symbol} — ${kanji.reading} — ${kanji.meaning}`;
+  return symbol;
+};
+
 const getRomaji = (symbol: string): string => {
   if (hiraganaRomaji[symbol]) return hiraganaRomaji[symbol];
   if (katakanaRomaji[symbol]) return katakanaRomaji[symbol];
@@ -309,7 +327,7 @@ function Writing() {
           </div>
           <aside className="stroke-order-card" aria-label={`${writingSymbol} stroke order`}>
             <StrokeOrderVisualizer symbol={writingSymbol} sectionTitle={activeSection.title} />
-            <p className="stroke-order-note">Build the character in order, one boxed stroke at a time.</p>
+            <p className="stroke-order-note">{getSymbolInfo(writingSymbol)}</p>
           </aside>
         </div>
       </section>

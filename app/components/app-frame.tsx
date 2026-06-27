@@ -255,7 +255,7 @@ export function AppFrame({ children }: { children: ReactNode }) {
           <section
             className="content"
             style={{
-              padding: "20px 14px 60px",
+              padding: "20px 14px 24px",
               background: "var(--glass-bg)",
               backdropFilter: "blur(5px)",
               minHeight: "calc(100vh - 62px)"
@@ -479,7 +479,7 @@ export function PageHeader({
 }) {
   return (
     <section className="page-header" style={{
-      marginBottom: "40px",
+      marginBottom: "20px",
       display: "flex",
       justifyContent: "space-between",
       alignItems: "flex-end",
@@ -490,7 +490,7 @@ export function PageHeader({
       boxShadow: "none",
       flexWrap: "wrap"
     }}>
-      <div style={{ minWidth: 0, flex: "1 1 280px" }}>
+      <div style={{ minWidth: 0, flex: "1 1 auto" }}>
         <span style={{ fontSize: "0.75rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--blue)", fontWeight: "900" }}>{eyebrow}</span>
         <h1 style={{ fontSize: "clamp(2rem, 5vw, 4rem)", fontWeight: "900", lineHeight: "1", marginTop: "8px", color: "var(--ink)" }}>{title}</h1>
         <p style={{ color: "var(--muted)", marginTop: "12px", fontSize: "clamp(0.9rem, 2vw, 1.1rem)" }}>{text}</p>
