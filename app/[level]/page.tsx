@@ -324,6 +324,7 @@ function Dashboard() {
               alt="Study scene"
               fill
               priority
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               style={{ objectFit: "cover" }}
             />
             <div style={{ position: "absolute", bottom: "16px", left: "16px", right: "16px", padding: "14px 18px", borderRadius: "8px", background: "rgba(0,0,0,0.65)", backdropFilter: "blur(12px)" }}>

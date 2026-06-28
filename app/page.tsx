@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { signInWithPopup, GoogleAuthProvider, GithubAuthProvider, signInWithEmailAndPassword, createUserWithEmailAndPassword, fetchSignInMethodsForEmail, linkWithCredential, onAuthStateChanged } from "firebase/auth";
 import { auth } from "./lib/firebase";
 import { motion } from "framer-motion";
-import { LogIn, UserPlus, Github, Mail } from "lucide-react";
+import { LogIn, UserPlus, Github } from "lucide-react";
 import CinematicBackground from "./components/cinematic-background";
 
 export default function LoginPage() {
@@ -43,11 +43,14 @@ export default function LoginPage() {
   const handleGoogleSignIn = async () => {
     try {
       setLoading(true);
+      setError(null);
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider);
       router.push("/select");
     } catch (err: any) {
-      setError(err.message);
+      if (err?.code !== "auth/popup-closed-by-user") {
+        setError(err?.message || "Google sign-in failed. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
@@ -61,7 +64,7 @@ export default function LoginPage() {
       await signInWithPopup(auth, provider);
       router.push("/select");
     } catch (err: any) {
-      if (err.code === "auth/account-exists-with-different-credential") {
+      if (err?.code === "auth/account-exists-with-different-credential") {
         const email = err.customData?.email;
         const pendingCredential = GithubAuthProvider.credentialFromError(err);
         try {
@@ -88,10 +91,10 @@ export default function LoginPage() {
           }
           router.push("/select");
         } catch (linkErr: any) {
-          setError(linkErr.message);
+          setError(linkErr?.message || "Failed to link accounts.");
         }
-      } else {
-        setError(err.message);
+      } else if (err?.code !== "auth/popup-closed-by-user") {
+        setError(err?.message || "GitHub sign-in failed. Please try again.");
       }
     } finally {
       setLoading(false);
@@ -110,7 +113,7 @@ export default function LoginPage() {
         await createUserWithEmailAndPassword(auth, email, password);
       }
       router.push("/select");
-    } catch (err: any) {
+    } catch {
       setError("Invalid Credentials.");
     } finally {
       setLoading(false);

@@ -2,11 +2,10 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, memo } from "react";
 import type { MouseEvent, ReactNode } from "react";
-import { BookOpen, Brain, ChevronLeft, ClipboardList, GraduationCap, Languages, Layers, Map, Menu, PenLine, Target, Sun, Moon, User, Newspaper, X } from "lucide-react";
-import { Level } from "../data";
-import { LearningProvider, useLearning } from "./learning-state";
+import { BookOpen, Brain, ChevronLeft, ClipboardList, GraduationCap, Languages, Layers, Map, Menu, PenLine, Target, User, Newspaper, X } from "lucide-react";
+import { useLearning } from "./learning-state";
 import CinematicBackground from "./cinematic-background";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -72,7 +71,7 @@ export function AppFrame({ children }: { children: ReactNode }) {
     setMobileMenuOpen((prev) => !prev);
   }, []);
 
-  function handleNavigation(event: MouseEvent<HTMLElement>) {
+  const handleNavigation = useCallback((event: MouseEvent<HTMLElement>) => {
     if (
       event.defaultPrevented ||
       event.button !== 0 ||
@@ -99,7 +98,7 @@ export function AppFrame({ children }: { children: ReactNode }) {
     if (nextUrl.origin === currentUrl.origin && nextUrl.pathname !== currentUrl.pathname) {
       setIsNavigating(true);
     }
-  }
+  }, []);
 
   // Mobile layout
   if (isMobile) {
@@ -323,9 +322,9 @@ export function NavigationLoader() {
   );
 }
 
-function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => void }) {
+const Sidebar = memo(function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => void }) {
   const pathname = usePathname();
-  const { level, setLevel } = useLearning();
+  const { level } = useLearning();
 
   return (
     <aside
@@ -464,7 +463,7 @@ function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => 
       )}
     </aside>
   );
-}
+});
 
 export function PageHeader({
   eyebrow,

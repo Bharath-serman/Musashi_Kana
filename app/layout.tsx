@@ -1,7 +1,21 @@
 import type { Metadata } from "next";
+import { Inter, Noto_Serif_JP } from "next/font/google";
 import "./globals.css";
 import { LearningProvider } from "./components/learning-state";
 import { AuthProvider } from "./components/auth-provider";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
+
+const notoSerifJp = Noto_Serif_JP({
+  weight: ["400", "700", "900"],
+  subsets: ["latin"],
+  variable: "--font-noto-serif",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Musashi_Kana ",
@@ -26,7 +40,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${inter.variable} ${notoSerifJp.variable}`}>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
@@ -40,3 +54,4 @@ export default function RootLayout({
     </html>
   );
 }
+
