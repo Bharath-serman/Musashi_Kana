@@ -330,8 +330,8 @@ function ProfileDashboard() {
             {message.text && (
               <div style={{
                 padding: "12px", borderRadius: "8px", fontSize: "0.9rem",
-                background: message.type === "error" ? "var(--error-soft)" : "var(--success-soft)",
-                color: message.type === "error" ? "var(--error)" : "var(--green)"
+                background: message.type === "error" ? "var(--red-soft)" : "var(--success-soft)",
+                color: message.type === "error" ? "var(--red)" : "var(--green)"
               }}>
                 {message.text}
               </div>
@@ -479,18 +479,17 @@ function ProfileDashboard() {
                         <input
                           type="email"
                           value={deleteEmail}
-                          onChange={(e) => setDeleteEmail(e.target.value)}
-                          placeholder="Confirm your email"
-                          required
+                          readOnly
                           style={{
                             width: "100%",
                             padding: "12px",
                             borderRadius: "8px",
                             border: "1px solid var(--line)",
-                            background: "var(--paper)",
-                            color: "var(--ink)",
+                            background: "var(--panel)",
+                            color: "var(--muted)",
                             outline: "none",
-                            fontSize: "1rem"
+                            fontSize: "1rem",
+                            cursor: "not-allowed"
                           }}
                         />
                       </div>
@@ -565,8 +564,8 @@ function ProfileDashboard() {
                         padding: "12px",
                         borderRadius: "8px",
                         fontSize: "0.85rem",
-                        background: "var(--error-soft)",
-                        color: "var(--error)",
+                        background: "var(--red-soft)",
+                        color: "var(--red)",
                         textAlign: "center"
                       }}>
                         {deleteError}
@@ -613,8 +612,8 @@ function ProfileDashboard() {
                             flex: 1,
                             padding: "12px",
                             borderRadius: "8px",
-                            border: "none",
-                            background: "var(--error)",
+                            border: "1px solid var(--line)",
+                            background: "var(--red)",
                             color: "white",
                             fontWeight: "bold",
                             cursor: isReauthorizing ? "not-allowed" : "pointer",
@@ -638,8 +637,8 @@ function ProfileDashboard() {
                             flex: 1,
                             padding: "12px",
                             borderRadius: "8px",
-                            border: "none",
-                            background: deleteStep === "credentials" ? "var(--blue)" : "var(--error)",
+                            border: "1px solid var(--line)",
+                            background: deleteStep === "credentials" ? "var(--blue)" : "var(--red)",
                             color: "white",
                             fontWeight: "bold",
                             cursor: (

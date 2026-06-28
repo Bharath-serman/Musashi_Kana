@@ -66,7 +66,7 @@ function Arena() {
       }));
     }
     return () => clearInterval(timer);
-  }, [gameState, timeLeft, correctCount, highScore, level]);
+  }, [gameState, timeLeft, correctCount, highScore, level, setProgress]);
 
   // Generate sequence of questions based on level
   const questions = useMemo(() => {
@@ -76,7 +76,7 @@ function Arena() {
     // Shuffled pool
     const pool = hiragana.map((h, i) => ({ kana: h, romaji: romaji[i] })).sort(() => Math.random() - 0.5);
     return pool; // Use all for continuous play
-  }, [level]);
+  }, []);
 
   const currentQuestion = questions[currentIndex % questions.length];
   const isStarred = currentQuestion ? starredItems.includes(currentQuestion.kana) : false;
@@ -243,7 +243,7 @@ function Arena() {
       </div>
 
       <div className="arena-footer">
-        <Link href="/${level}/" className="footer-btn">
+        <Link href={`/${level.toLowerCase()}/`} className="footer-btn">
           <Home size={20} />
           <span>HOME</span>
         </Link>

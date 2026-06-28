@@ -101,41 +101,6 @@ function Flashcards() {
           title={`${level} flashcard trainer`}
           text="Select a topic to start your flashcard practice."
         />
-        <style>{`
-          .topics-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
-            margin-top: 20px;
-          }
-          .topic-button {
-            padding: 24px;
-            border: 1px solid var(--line);
-            border-radius: 8px;
-            background: var(--panel);
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-          }
-          .topic-button:hover {
-            border-color: var(--blue);
-            background: rgba(232, 139, 161, 0.05);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(42, 31, 38, 0.05);
-          }
-          .topic-button strong {
-            font-size: 1.2rem;
-            text-transform: capitalize;
-            color: var(--ink);
-          }
-          .topic-button span {
-            color: var(--muted);
-            font-size: 0.9rem;
-          }
-        `}</style>
         <div className="topics-grid">
           {["vocab", "kanji", "numbers", "particles"].map((topic) => (
             <button

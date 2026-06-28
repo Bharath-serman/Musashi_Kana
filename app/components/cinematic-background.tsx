@@ -17,6 +17,12 @@ export default function CinematicBackground() {
   }[]>([]);
 
   useEffect(() => {
+    // Check if user prefers reduced motion
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReducedMotion) {
+      return;
+    }
+
     const numParticles = 30;
     const newParticles = [];
     for (let i = 0; i < numParticles; i++) {
@@ -61,6 +67,7 @@ export default function CinematicBackground() {
             boxShadow: '0 0 10px var(--blue)',
             left: `${p.x}%`,
             top: `${p.y}%`,
+            willChange: "transform, opacity"
           }}
           animate={{
             x: p.pathX,
@@ -79,3 +86,4 @@ export default function CinematicBackground() {
     </div>
   );
 }
+
