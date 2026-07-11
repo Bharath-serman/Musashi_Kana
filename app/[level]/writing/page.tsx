@@ -344,32 +344,11 @@ function StrokeOrderVisualizer({ symbol, sectionTitle }: { symbol: string; secti
     async function fetchSvg() {
       setLoading(true);
       try {
-        // Use codePointAt for proper Unicode surrogate-pair handling
-        const cp = symbol.codePointAt(0) ?? symbol.charCodeAt(0);
-        const hex = cp.toString(16).padStart(5, "0");
-        const url = `https://cdn.jsdelivr.net/gh/kanjivg/kanjivg@master/kanji/${hex}.svg`;
-        const res = await fetch(url);
-        if (!res.ok) throw new Error(`SVG not found (${res.status})`);
-        const text = await res.text();
-
-        // Find paths only inside the StrokePaths group (excludes number labels).
-        // We search for all <path d="..."> inside that region, which is safe
-        // even if the regex doesn't capture the group boundary perfectly.
-        const strokeGroupStart = text.indexOf('id="kvg:StrokePaths');
-        const svgSlice = strokeGroupStart !== -1
-          ? text.slice(strokeGroupStart)
-          : text;
-
-        // Use regex to pull <path d="..."> values directly — avoids DOMParser
-        // failures caused by the KanjiVG DOCTYPE/external-entity declaration.
-        const dValues: string[] = [];
-        const pathRegex = /\sd="([^"]+)"/g;
-        let m: RegExpExecArray | null;
-        while ((m = pathRegex.exec(svgSlice)) !== null) {
-          if (m[1]) dValues.push(m[1]);
-        }
-
-        if (!cancelled) setPaths(dValues.length > 0 ? dValues : []);
+        const hex = symbol.charCodeAt(0).toString(16).padStart(5, "0");
+        const res = await fetch(`/api/stroke?hex=${hex}`);
+        if (!res.ok) throw new Error("Stroke data not found");
+        const data = await res.json();
+        setPaths(data.paths ?? []);
       } catch (err) {
         console.error("Stroke fetch error for", symbol, err);
         if (!cancelled) setPaths([]);
@@ -391,9 +370,19 @@ function StrokeOrderVisualizer({ symbol, sectionTitle }: { symbol: string; secti
 
   if (paths.length === 0) {
     return (
-      <div className="stroke-order-board">
-        <div className="stroke-order-error">Visual stroke guide unavailable for {symbol}</div>
-      </div>
+      <>
+        <span>{sectionTitle}</span>
+        <h2>{symbol} stroke order</h2>
+        <div className="stroke-order-board">
+          <div className="stroke-step-preview final hero">
+            <span className="stroke-step-glyph">{symbol}</span>
+          </div>
+          <div className="stroke-step-preview">
+            <span className="stroke-step-number">1</span>
+            <span className="stroke-step-ghost">{symbol}</span>
+          </div>
+        </div>
+      </>
     );
   }
 
