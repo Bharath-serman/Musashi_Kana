@@ -340,6 +340,7 @@ function StrokeOrderVisualizer({ symbol, sectionTitle }: { symbol: string; secti
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let cancelled = false;
     async function fetchSvg() {
       setLoading(true);
       try {
@@ -349,12 +350,14 @@ function StrokeOrderVisualizer({ symbol, sectionTitle }: { symbol: string; secti
         const data = await res.json();
         setPaths(data.paths ?? []);
       } catch (err) {
-        setPaths([]);
+        console.error("Stroke fetch error for", symbol, err);
+        if (!cancelled) setPaths([]);
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     }
     fetchSvg();
+    return () => { cancelled = true; };
   }, [symbol]);
 
   if (loading) {
