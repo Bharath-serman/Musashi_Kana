@@ -224,36 +224,7 @@ export default function LoginPage() {
             Continue with Google
           </button>
 
-          <button
-            onClick={handleGithubSignIn}
-            disabled={loading}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "12px",
-              width: "100%",
-              padding: "14px",
-              borderRadius: "12px",
-              border: "1px solid var(--line)",
-              background: "var(--ink)",
-              color: "var(--paper)",
-              fontWeight: "600",
-              cursor: "pointer",
-              transition: "transform 0.2s, background 0.2s"
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = "translateY(-2px)";
-              e.currentTarget.style.background = "var(--blue-dark)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "none";
-              e.currentTarget.style.background = "var(--ink)";
-            }}
-          >
-            <Github size={20} />
-            Continue with GitHub
-          </button>
+         
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: "16px", margin: "24px 0" }}>
