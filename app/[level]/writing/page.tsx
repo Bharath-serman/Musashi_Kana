@@ -344,17 +344,10 @@ function StrokeOrderVisualizer({ symbol, sectionTitle }: { symbol: string; secti
       setLoading(true);
       try {
         const hex = symbol.charCodeAt(0).toString(16).padStart(5, "0");
-        const url = `https://cdn.jsdelivr.net/gh/kanjivg/kanjivg@master/kanji/${hex}.svg`;
-        const res = await fetch(url);
-        if (!res.ok) throw new Error("SVG not found");
-        const text = await res.text();
-        const dValues: string[] = [];
-        const pathRegex = /<path[^>]*\bd=(?:"([^"]+)"|'([^']+)')/g;
-        let match;
-        while ((match = pathRegex.exec(text)) !== null) {
-          dValues.push(match[1] ?? match[2]);
-        }
-        setPaths(dValues);
+        const res = await fetch(`/api/stroke?hex=${hex}`);
+        if (!res.ok) throw new Error("Stroke data not found");
+        const data = await res.json();
+        setPaths(data.paths ?? []);
       } catch (err) {
         setPaths([]);
       } finally {
@@ -374,9 +367,19 @@ function StrokeOrderVisualizer({ symbol, sectionTitle }: { symbol: string; secti
 
   if (paths.length === 0) {
     return (
-      <div className="stroke-order-board">
-        <div className="stroke-order-error">Visual stroke guide unavailable for {symbol}</div>
-      </div>
+      <>
+        <span>{sectionTitle}</span>
+        <h2>{symbol} stroke order</h2>
+        <div className="stroke-order-board">
+          <div className="stroke-step-preview final hero">
+            <span className="stroke-step-glyph">{symbol}</span>
+          </div>
+          <div className="stroke-step-preview">
+            <span className="stroke-step-number">1</span>
+            <span className="stroke-step-ghost">{symbol}</span>
+          </div>
+        </div>
+      </>
     );
   }
 
