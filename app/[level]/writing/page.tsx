@@ -340,26 +340,45 @@ function StrokeOrderVisualizer({ symbol, sectionTitle }: { symbol: string; secti
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let cancelled = false;
     async function fetchSvg() {
       setLoading(true);
       try {
-        const hex = symbol.charCodeAt(0).toString(16).padStart(5, "0");
+        // Use codePointAt for proper Unicode surrogate-pair handling
+        const cp = symbol.codePointAt(0) ?? symbol.charCodeAt(0);
+        const hex = cp.toString(16).padStart(5, "0");
         const url = `https://cdn.jsdelivr.net/gh/kanjivg/kanjivg@master/kanji/${hex}.svg`;
         const res = await fetch(url);
-        if (!res.ok) throw new Error("SVG not found");
+        if (!res.ok) throw new Error(`SVG not found (${res.status})`);
         const text = await res.text();
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(text, "image/svg+xml");
-        const pathElements = Array.from(doc.querySelectorAll("path"));
-        const dValues = pathElements.map((p) => p.getAttribute("d") || "");
-        setPaths(dValues);
+
+        // Find paths only inside the StrokePaths group (excludes number labels).
+        // We search for all <path d="..."> inside that region, which is safe
+        // even if the regex doesn't capture the group boundary perfectly.
+        const strokeGroupStart = text.indexOf('id="kvg:StrokePaths');
+        const svgSlice = strokeGroupStart !== -1
+          ? text.slice(strokeGroupStart)
+          : text;
+
+        // Use regex to pull <path d="..."> values directly — avoids DOMParser
+        // failures caused by the KanjiVG DOCTYPE/external-entity declaration.
+        const dValues: string[] = [];
+        const pathRegex = /\sd="([^"]+)"/g;
+        let m: RegExpExecArray | null;
+        while ((m = pathRegex.exec(svgSlice)) !== null) {
+          if (m[1]) dValues.push(m[1]);
+        }
+
+        if (!cancelled) setPaths(dValues.length > 0 ? dValues : []);
       } catch (err) {
-        setPaths([]);
+        console.error("Stroke fetch error for", symbol, err);
+        if (!cancelled) setPaths([]);
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     }
     fetchSvg();
+    return () => { cancelled = true; };
   }, [symbol]);
 
   if (loading) {
