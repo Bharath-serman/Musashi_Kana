@@ -348,10 +348,12 @@ function StrokeOrderVisualizer({ symbol, sectionTitle }: { symbol: string; secti
         const res = await fetch(url);
         if (!res.ok) throw new Error("SVG not found");
         const text = await res.text();
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(text, "image/svg+xml");
-        const pathElements = Array.from(doc.querySelectorAll("path"));
-        const dValues = pathElements.map((p) => p.getAttribute("d") || "");
+        const dValues: string[] = [];
+        const pathRegex = /<path[^>]*\bd=(?:"([^"]+)"|'([^']+)')/g;
+        let match;
+        while ((match = pathRegex.exec(text)) !== null) {
+          dValues.push(match[1] ?? match[2]);
+        }
         setPaths(dValues);
       } catch (err) {
         setPaths([]);
